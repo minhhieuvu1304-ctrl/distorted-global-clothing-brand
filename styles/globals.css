@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────────
+   FONT FACES
+   ─────────────────────────────────────────────────────────────────────
+   Per spec §2, the display font is "Bodoni 72 Oldstyle". This is a
+   system font on Apple devices but not universally available, and it
+   is NOT a free webfont — we cannot legally serve the Apple version.
+
+   Strategy:
+     1. @font-face declares a local-only lookup for Bodoni 72 Oldstyle
+        (will resolve on Apple devices that have it system-installed).
+     2. Bodoni Moda is loaded from Google Fonts via next/font in
+        app/layout.tsx and serves as the fallback web-safe substitute.
+        It's the closest free alternative — slightly more contrast in
+        the strokes but the same general silhouette.
+     3. The owner can replace this with a properly licensed
+        Bodoni 72 webfont by dropping woff2 files into /public/fonts
+        and uncommenting the src lines below.
+
+   Owner action item (spec §15): if licensing Bodoni 72 Oldstyle as a
+   webfont, add the woff2 files to /public/fonts/ and update the src.
+   ───────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Bodoni 72 Oldstyle';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local('Bodoni 72 Oldstyle Book'), local('Bodoni72Oldstyle-Book'),
+    local('Bodoni 72 Oldstyle');
+  /* When licensed webfont is added:
+     url('/fonts/Bodoni72Oldstyle-Book.woff2') format('woff2'); */
+}
+
+@font-face {
+  font-family: 'Bodoni 72 Oldstyle';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src:
+    local('Bodoni 72 Oldstyle Book Italic'), local('Bodoni72Oldstyle-BookIta');
+}
+
+@font-face {
+  font-family: 'Bodoni 72 Oldstyle';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Bodoni 72 Oldstyle Bold'), local('Bodoni72Oldstyle-Bold');
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   BASE LAYER
+   Site is dark by default per spec §2.
+   ───────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    /* Lenis controls scroll; this is just the fallback when reduced
+       motion disables Lenis. */
+    scroll-behavior: auto;
+  }
+
+  body {
+    @apply bg-ink font-sans text-paper;
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: 0;
+    /* Optical refinements for the editorial tone */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1;
+  }
+
+  /* Selection — paper on ink, inverted */
+  ::selection {
+    @apply bg-paper text-ink;
+  }
+
+  /* Focus rings — subtle paper outline per spec §13 accessibility */
+  :focus-visible {
+    outline: 1px solid theme('colors.paper');
+    outline-offset: 2px;
+  }
+
+  /* Default heading reset — components apply their own type tokens */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: theme('fontFamily.display');
+    font-weight: 400;
+    line-height: 1.1;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   LIGHT-MODE SECTION OVERRIDE
+   Per spec §2 — site is dark by default with "light editorial breaks
+   used sparingly". Wrap any section in <section className="light-section">
+   to invert. The Logo component reads the same flag via its `variant`
+   prop; both should be set together when a section flips to light.
+   ───────────────────────────────────────────────────────────────────── */
+@layer components {
+  .light-section {
+    @apply bg-paper text-ink;
+  }
+  .light-section ::selection {
+    @apply bg-ink text-paper;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   REDUCED MOTION
+   Spec §2 + §13: prefers-reduced-motion disables ALL motion.
+   The useReducedMotion hook handles JS-driven motion (Lenis, scroll
+   reveals). This block handles CSS-driven motion as a safety net.
+   ───────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   HERO SECTION ANIMATIONS
+   The hero text overlay (headline / subhead / CTA) fades in
+   sequentially after page load. The scroll cue at the bottom-center
+   pulses subtly while visible. Both keyframes are scoped here so the
+   Hero component doesn't need styled-jsx.
+   ───────────────────────────────────────────────────────────────────── */
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-hero-fade-in {
+  animation-name: hero-fade-in;
+  animation-duration: 600ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+@keyframes scroll-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-scroll-pulse {
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+
+/* PDP "ADDED ✓" subtle pulse — single tasteful flash on success.
+   No bounce, no scale jump; just a quick opacity dip-and-return. */
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+.animate-soft-pulse {
+  animation: soft-pulse 600ms ease-out;
+}

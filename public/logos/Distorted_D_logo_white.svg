@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" role="img" aria-label="Distorted">
+  <!-- Embedded background rectangle per spec §2 logo system + prompt §4.
+       Color matches site --ink. Owner action item (spec §15): strip this
+       background once a clean SVG is provided. -->
+  <rect width="480" height="160" fill="#212529"/>
+  <g fill="#E9ECEF" font-family="Bodoni 72 Oldstyle, Bodoni Moda, serif">
+    <!-- Cursive D + 'istorted' wordmark -->
+    <text x="40" y="80" font-size="64" font-style="italic" font-weight="400">D</text>
+    <text x="92" y="80" font-size="44" font-weight="400" letter-spacing="-0.01em">istorted</text>
+    <!-- Mirrored reflection underneath -->
+    <g transform="translate(0, 160) scale(1, -1)" opacity="0.35">
+      <text x="40" y="80" font-size="64" font-style="italic" font-weight="400">D</text>
+      <text x="92" y="80" font-size="44" font-weight="400" letter-spacing="-0.01em">istorted</text>
+    </g>
+  </g>
+</svg>
