@@ -74,7 +74,8 @@ export type LookbookSection =
   | AsymmetricPairSection
   | TriptychSection
   | DetailStackSection
-  | TextBreakSection;
+  | TextBreakSection
+  | MasonrySection;
 
 /**
  * Cover — first section of the lookbook. Full-bleed cinematic image
@@ -157,6 +158,44 @@ export interface TextBreakSection {
   copy: string;
   /** Default 'center'. */
   align?: 'left' | 'center';
+}
+
+/**
+ * Aspect ratio for a masonry card. The value drives both the
+ * rendered card height (via Tailwind aspect-* class) and the
+ * column-balancing weight in the masonry algorithm.
+ *
+ *   tall    4:5 portrait — most editorial
+ *   medium  5:6 portrait — slightly less elongated
+ *   short   4:3 landscape — gives breathing room in a tall column
+ *   square  1:1 — versatile, good for detail shots
+ */
+export type MasonryAspect = 'tall' | 'medium' | 'short' | 'square';
+
+export interface MasonryCardItem {
+  image: LookbookImage;
+  /** Default 'medium' if omitted. */
+  aspect?: MasonryAspect;
+}
+
+/**
+ * Pinterest-style dense grid section. Replaces the old per-section
+ * modular layouts (full-bleed-single / asymmetric-pair / triptych /
+ * detail-stack) for v2 of the lookbook page.
+ *
+ * Three columns desktop, two columns mobile, ~12px gutters. Cards
+ * have variable heights driven by `aspect` per item — the masonry
+ * algorithm balances columns by accumulated height so the grid feels
+ * organic without being random.
+ *
+ * To extend: append items to the `items` array and pick an `aspect`.
+ * The grid self-balances. No need to think about column placement.
+ */
+export interface MasonrySection {
+  type: 'masonry';
+  items: MasonryCardItem[];
+  /** Max columns on desktop. Default 3. Set to 4 for denser grids. */
+  desktopColumns?: 2 | 3 | 4;
 }
 
 /**
