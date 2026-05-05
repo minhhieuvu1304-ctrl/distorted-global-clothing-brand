@@ -7,7 +7,8 @@ import { FullBleedSingle } from './FullBleedSingle';
 import { AsymmetricPair } from './AsymmetricPair';
 import { Triptych } from './Triptych';
 import { DetailStack } from './DetailStack';
-import { TextBreak } from './TextBreak';
+import { TextBreakBand } from './TextBreakBand';
+import { MasonryGrid, type MasonryItem } from './MasonryGrid';
 import { InstagramFeed } from './InstagramFeed';
 import { Closing } from './Closing';
 import { Lightbox, type LightboxImage } from '@/components/ui/Lightbox';
@@ -78,6 +79,9 @@ function flattenImages(sections: LookbookSection[]): FlattenedImages {
         break;
       case 'detail-stack':
         all.push(...section.images);
+        break;
+      case 'masonry':
+        for (const it of section.items) all.push(it.image);
         break;
       case 'text-break':
         // No images to add; offset still recorded so indexing stays
@@ -185,8 +189,48 @@ export function LookbookClient() {
                 onImageClick={(idx, rect) => click(idx, rect)}
               />
             );
+          case 'masonry': {
+            // Build the per-item data the grid needs. Each item gets
+            // the global lightbox index = section's offset + position
+            // within the section. The grid passes that index back up
+            // when a card is clicked.
+            const baseOffset = offsets[i] ?? 0;
+            const masonryItems: MasonryItem[] = section.items.map((it, k) => ({
+              id: `${i}-${k}-${it.image.src}`,
+              image: it.image,
+              aspect: it.aspect ?? 'medium',
+              globalIndex: baseOffset + k,
+            }));
+            return (
+              <section
+                key={i}
+                aria-label="Lookbook gallery"
+                // Container padding matches site rhythm (~16px mobile,
+                // ~24px desktop). The grid itself handles internal gutters.
+                className="bg-ink px-2 py-6 md:px-4 md:py-12"
+              >
+                <MasonryGrid
+                  items={masonryItems}
+                  onCardClick={(globalIndex, rect) => {
+                    setLightboxOrigin(rect);
+                    setLightboxIndex(globalIndex);
+                  }}
+                  desktopColumns={section.desktopColumns ?? 3}
+                />
+              </section>
+            );
+          }
           case 'text-break':
-            return <TextBreak key={i} section={section} />;
+            // v2 lookbook uses TextBreakBand (compact 30vh band)
+            // instead of the legacy 60-70vh TextBreak. Both accept
+            // the same fields, so swapping is one line.
+            return (
+              <TextBreakBand
+                key={i}
+                copy={section.copy}
+                align={section.align}
+              />
+            );
           default: {
             const _exhaustive: never = section;
             void _exhaustive;
