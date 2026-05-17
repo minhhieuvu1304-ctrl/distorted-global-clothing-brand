@@ -1,0 +1,341 @@
+/* styles/shop.css
+   Styling for the shop, product, and cart components.
+   Import this in app/layout.tsx, or merge into your existing global CSS.
+   Adjust colors/fonts to match the Distorted Global brand. */
+
+/* ---- Shop listing ---- */
+.shop {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+.shop__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+.shop__title {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  letter-spacing: -0.02em;
+}
+.shop__count {
+  opacity: 0.55;
+  font-size: 0.85rem;
+}
+.shop__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 2rem 1.5rem;
+}
+.shop__empty {
+  opacity: 0.6;
+}
+
+/* ---- Product card ---- */
+.product-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.product-card__image {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #f2f1ee;
+}
+.product-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.product-card:hover .product-card__img {
+  transform: scale(1.04);
+}
+.product-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: #111;
+  color: #fff;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+}
+.product-card__meta {
+  padding: 0.85rem 0.25rem;
+}
+.product-card__title {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.product-card__price {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin-top: 0.2rem;
+}
+
+/* ---- Product detail ---- */
+.product {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+}
+@media (max-width: 800px) {
+  .product {
+    grid-template-columns: 1fr;
+  }
+}
+.product__gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.product__image img {
+  width: 100%;
+  height: auto;
+  background: #f2f1ee;
+}
+.product__details {
+  position: sticky;
+  top: 2rem;
+  align-self: start;
+}
+.product__title {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: -0.02em;
+}
+.product__price {
+  font-size: 1.25rem;
+  margin: 0.5rem 0 1.5rem;
+}
+.product__description {
+  line-height: 1.6;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+/* ---- Add to cart ---- */
+.add-to-cart__label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+.add-to-cart__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.6rem 0 1.5rem;
+}
+.variant-chip {
+  min-width: 3rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+}
+.variant-chip--active {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+.variant-chip--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+.add-to-cart__button {
+  width: 100%;
+  padding: 1rem;
+  background: #111;
+  color: #fff;
+  border: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.add-to-cart__button:hover {
+  opacity: 0.85;
+}
+.add-to-cart__button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---- Cart button ---- */
+.cart-button {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+}
+.cart-button__count {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.9rem;
+  background: #111;
+  color: #fff;
+  font-size: 0.65rem;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Cart drawer ---- */
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 40;
+}
+.cart-overlay--open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(420px, 90vw);
+  background: #fff;
+  z-index: 50;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.cart-drawer--open {
+  transform: translateX(0);
+}
+.cart-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+.cart-drawer__close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+.cart-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+}
+.cart-drawer__empty {
+  opacity: 0.6;
+  text-align: center;
+  margin-top: 3rem;
+}
+.cart-line {
+  display: flex;
+  gap: 0.85rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.cart-line__img {
+  object-fit: cover;
+  background: #f2f1ee;
+}
+.cart-line__info {
+  flex: 1;
+}
+.cart-line__title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.cart-line__variant {
+  font-size: 0.8rem;
+  opacity: 0.55;
+  margin: 0.1rem 0 0.5rem;
+}
+.cart-line__qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ddd;
+}
+.cart-line__qty button {
+  width: 1.8rem;
+  height: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.cart-line__qty span {
+  min-width: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+.cart-line__right {
+  text-align: right;
+}
+.cart-line__price {
+  font-size: 0.9rem;
+}
+.cart-line__remove {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  opacity: 0.5;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
+.cart-drawer__footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid #eee;
+}
+.cart-drawer__subtotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.cart-drawer__note {
+  font-size: 0.75rem;
+  opacity: 0.55;
+  margin: 0.4rem 0 1rem;
+}
+.cart-drawer__error {
+  color: #c0392b;
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+.cart-drawer__checkout {
+  width: 100%;
+  padding: 1rem;
+  background: #111;
+  color: #fff;
+  border: none;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+.cart-drawer__checkout:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
