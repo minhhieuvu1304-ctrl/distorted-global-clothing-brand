@@ -36,7 +36,7 @@ export function TextBreak({ section }: TextBreakProps) {
         <FadeIn>
           <p
             className={cn(
-              'font-display text-paper',
+              'font-serif text-paper',
               'text-[36px] leading-[1.15] md:text-[56px] md:leading-[1.1] lg:text-[72px]',
               align === 'left' && 'md:max-w-[80%]'
             )}

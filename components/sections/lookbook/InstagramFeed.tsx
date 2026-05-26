@@ -42,7 +42,7 @@ export function InstagramFeed() {
       <div className="mx-auto max-w-[1440px] px-4 md:px-12 lg:px-16">
         {/* Section header */}
         <div className="mb-12 flex items-baseline justify-between md:mb-16">
-          <h2 className="font-display text-[40px] uppercase leading-[1.1] text-paper md:text-[56px]">
+          <h2 className="font-display text-[40px] leading-[1.1] text-paper md:text-[56px]">
             {instagram.heading}
           </h2>
           <span className="font-sans text-caption uppercase text-mist">

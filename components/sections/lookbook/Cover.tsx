@@ -71,7 +71,7 @@ export function Cover({ section, onImageClick }: CoverProps) {
         )}
         style={reduced || !mounted ? undefined : { animationDelay: '300ms' }}
       >
-        <h1 className="font-display text-[56px] uppercase leading-[1.05] tracking-[-0.01em] text-paper md:text-display-xl">
+        <h1 className="font-display text-[56px] leading-[1.05] tracking-[-0.01em] text-paper md:text-display-xl">
           {section.title}
         </h1>
       </div>

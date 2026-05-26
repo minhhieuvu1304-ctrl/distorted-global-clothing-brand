@@ -35,7 +35,7 @@ export function TextBreakBand({ copy, align = 'center' }: TextBreakBandProps) {
         <FadeIn>
           <p
             className={cn(
-              'font-display text-paper',
+              'font-serif text-paper',
               // Slightly smaller than the old TextBreak too — felt
               // outsized at 72px alongside compact masonry cards.
               'text-[28px] leading-[1.15] md:text-[40px] md:leading-[1.1] lg:text-[52px]',
