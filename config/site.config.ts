@@ -291,17 +291,92 @@ export const siteConfig = {
       followLabel: 'Follow on Instagram',
       followHref: 'https://instagram.com/distorted.global',
       /**
-       * EmbedSocial widget embed code. Empty string keeps the
-       * placeholder grid; once owner provides the embed snippet
-       * from EmbedSocial admin, paste it here and the InstagramFeed
-       * component swaps to the live widget.
+       * ════════════════════════════════════════════════════════════
+       * CURATED INSTAGRAM POSTS — owner-editable
+       * ════════════════════════════════════════════════════════════
        *
-       * Owner action item (spec §15): create EmbedSocial account,
-       * authorize Instagram Business/Creator account, copy the
-       * widget embed code into this string.
+       * 6 hero images linking to specific Instagram posts. Owner
+       * curates which moments from the feed get featured here.
        *
-       * Format example:
-       *   '<div class="embedsocial-instagram" data-ref="abc123">…'
+       * To update a post:
+       *   1. Find a post on Instagram you want to feature
+       *   2. Right-click → "Copy link" (looks like
+       *      https://www.instagram.com/p/AbCdEfGhIjK/)
+       *   3. Save the image (right-click → "Save image as") and
+       *      upload it to /public/instagram/ in the repo
+       *   4. Replace the entry below with the new image path + URL
+       *
+       * Empty array → renders "COMING SOON" placeholders.
+       * Array of 6 → renders the curated grid.
+       *
+       * Anything other than 6 also works (fewer than 6 = shorter
+       * row, more than 6 = wraps to a second row on desktop).
+       * Six is the sweet spot for a single-strip layout.
+       *
+       * Owner action item: replace these picsum placeholders with
+       * real Instagram post screenshots + URLs when ready to ship.
+       * ════════════════════════════════════════════════════════════
+       */
+      posts: [
+        {
+          image: {
+            src: 'https://picsum.photos/seed/ig-1/800/800',
+            alt: 'Distorted Instagram post 1',
+          },
+          href: 'https://www.instagram.com/distorted.global/',
+        },
+        {
+          image: {
+            src: 'https://picsum.photos/seed/ig-2/800/800',
+            alt: 'Distorted Instagram post 2',
+          },
+          href: 'https://www.instagram.com/distorted.global/',
+        },
+        {
+          image: {
+            src: 'https://picsum.photos/seed/ig-3/800/800',
+            alt: 'Distorted Instagram post 3',
+          },
+          href: 'https://www.instagram.com/distorted.global/',
+        },
+        {
+          image: {
+            src: 'https://picsum.photos/seed/ig-4/800/800',
+            alt: 'Distorted Instagram post 4',
+          },
+          href: 'https://www.instagram.com/distorted.global/',
+        },
+        {
+          image: {
+            src: 'https://picsum.photos/seed/ig-5/800/800',
+            alt: 'Distorted Instagram post 5',
+          },
+          href: 'https://www.instagram.com/distorted.global/',
+        },
+        {
+          image: {
+            src: 'https://picsum.photos/seed/ig-6/800/800',
+            alt: 'Distorted Instagram post 6',
+          },
+          href: 'https://www.instagram.com/distorted.global/',
+        },
+      ] as ReadonlyArray<{
+        image: { src: string; alt: string };
+        href: string;
+      }>,
+      /**
+       * EmbedSocial widget embed code — alternative integration path.
+       * If populated, this takes priority over `posts` above and
+       * renders the live EmbedSocial widget instead. Kept here for
+       * forward compatibility — if the brand later decides to switch
+       * from curated-image mode to a live auto-feed, paste the
+       * EmbedSocial embed snippet here and the InstagramFeed
+       * component swaps automatically.
+       *
+       * Priority order in InstagramFeed:
+       *   1. embedCode present → live widget
+       *   2. posts array non-empty → curated grid (current default)
+       *   3. both empty → "Coming soon" placeholder
        */
       embedCode: '',
     },
