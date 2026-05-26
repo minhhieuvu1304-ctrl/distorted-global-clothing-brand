@@ -3,7 +3,11 @@
 import Image from 'next/image';
 import { useMediaQuery, useReducedMotion } from '@/lib/hooks';
 import { cn } from '@/lib/cn';
-import type { ProductImage } from '@/lib/types';
+// ProductImage comes from the canonical Shopify module (which uses
+// `src`/`alt`, matching the normalized internal shape) — NOT from
+// '@/lib/types' (which re-exports the raw Storefront shape using
+// `url`/`altText`).
+import type { ProductImage } from '@/lib/shopify';
 
 /**
  * CrossfadeImage
