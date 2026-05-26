@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site.config';
 import { cn } from '@/lib/cn';
@@ -5,34 +6,31 @@ import { cn } from '@/lib/cn';
 /**
  * InstagramFeed
  *
- * Spec §7 + Prompt 6 §6.
+ * Lookbook closing section (spec §7) — "FROM THE FEED" strip with
+ * a 6-image grid linking out to specific Instagram posts.
  *
- * Two modes:
+ * Three render modes, in priority order:
  *
- *   1. PLACEHOLDER (default while siteConfig.lookbook.instagram
- *      .embedCode is empty). Renders the section header + a 6-tile
- *      grid of empty smoke squares with "Coming soon" in --steel.
- *      Layout, styling, and hover treatment are production-ready so
- *      visual QA can be done before the real feed lands.
+ *   1. LIVE WIDGET — `siteConfig.lookbook.instagram.embedCode` is set.
+ *      Renders the EmbedSocial (or other third-party) embed markup.
+ *      Forward-compat path — most setups won't use this.
  *
- *   2. LIVE EmbedSocial widget. Once owner provides the embed code
- *      from EmbedSocial admin and pastes it into siteConfig
- *      .lookbook.instagram.embedCode, the placeholder is replaced
- *      with that markup via dangerouslySetInnerHTML. EmbedSocial
- *      ships its own JS that mounts the feed; we just give it a
- *      DOM container to attach to.
+ *   2. CURATED GRID — `siteConfig.lookbook.instagram.posts` has entries.
+ *      The default + recommended mode. Owner picks 6 hero images from
+ *      their Instagram, each linking to a specific post URL. New tab.
+ *      Click-through includes the same ImageHover treatment as the
+ *      rest of the lookbook (subtle scale + lift) for design consistency.
  *
- * Why dangerouslySetInnerHTML is safe here: the embed code comes
- * from a trusted config file (siteConfig), not user input. The
- * owner pastes a known EmbedSocial snippet. It's the same trust
- * level as any third-party script tag in <head>.
+ *   3. PLACEHOLDER — both above are empty. Renders 6 "COMING SOON"
+ *      smoke tiles. Used during initial dev / before launch content lands.
  *
- * "Follow on Instagram →" link below — always rendered, even in
- * placeholder mode.
+ * "Follow on Instagram →" link always renders below the grid regardless
+ * of mode.
  */
 export function InstagramFeed() {
   const { instagram } = siteConfig.lookbook;
   const hasEmbed = instagram.embedCode.trim().length > 0;
+  const hasPosts = instagram.posts.length > 0;
 
   return (
     <section
@@ -50,12 +48,11 @@ export function InstagramFeed() {
           </span>
         </div>
 
-        {/* Body — live widget or placeholder */}
+        {/* Body — three modes resolved here */}
         {hasEmbed ? (
-          // Live EmbedSocial widget. The embed code typically includes
-          // a <div data-ref="..."> + a <script> tag that mounts into
-          // it. We render the markup as-is.
-          <div dangerouslySetInnerHTML={{ __html: instagram.embedCode }} />
+          <LiveEmbed embedCode={instagram.embedCode} />
+        ) : hasPosts ? (
+          <CuratedGrid posts={instagram.posts} />
         ) : (
           <PlaceholderGrid />
         )}
@@ -82,15 +79,76 @@ export function InstagramFeed() {
   );
 }
 
-/**
- * 6-tile 1:1 placeholder grid. Each tile is the smoke surface color
- * with subtle "Coming soon" text in steel — restrained and
- * professional rather than a giant "TODO" banner.
- *
- * Grid: 3 cols mobile, 6 cols desktop (single row at desktop reads
- * as a strip — appropriate for an Instagram-style feed). Switches
- * back to 3 cols on the smallest viewports for tap-target sanity.
- */
+// ──────────────────────────────────────────────────────────────────────
+// Curated grid — 6 hero images linking to specific Instagram posts
+// ──────────────────────────────────────────────────────────────────────
+
+interface InstagramPost {
+  image: { src: string; alt: string };
+  href: string;
+}
+
+function CuratedGrid({ posts }: { posts: ReadonlyArray<InstagramPost> }) {
+  return (
+    <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3 lg:grid-cols-6">
+      {posts.map((post, i) => (
+        <CuratedTile key={`${post.href}-${i}`} post={post} />
+      ))}
+    </div>
+  );
+}
+
+function CuratedTile({ post }: { post: InstagramPost }) {
+  // Tile uses a plain <a> rather than the lookbook's <ImageHover>
+  // primitive because:
+  //   - Instagram tiles NAVIGATE OUT (anchor semantics matter for
+  //     SEO and accessibility — crawlers can see these as outbound
+  //     links to instagram.com).
+  //   - Lookbook tiles OPEN A LIGHTBOX (button semantics — no
+  //     navigation, no URL).
+  //   - Wrapping ImageHover (which renders a <button>) inside an
+  //     <a> would produce invalid nested-interactive HTML.
+  //
+  // The hover treatment is built inline using the same locked
+  // design vocabulary as ImageHover (1.04 scale, lookbook shadow,
+  // z-index lift, 400ms lookbook easing). The `group` utility makes
+  // child elements respond to the parent <a>'s hover state.
+  return (
+    <a
+      href={post.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Open Instagram post: ${post.image.alt}`}
+      className={cn(
+        'group relative block aspect-square overflow-hidden bg-smoke',
+        // Hover lift — same vocabulary as <ImageHover />:
+        // 1.04 scale via inner div + the locked lookbook shadow.
+        // The transform sits on the inner <span> wrapping the image
+        // so layout stays intact (the parent <a> doesn't move,
+        // only the image content scales).
+        'transition-shadow duration-400 ease-lookbook',
+        'hover:z-10 hover:shadow-lookbook',
+        // Focus ring for keyboard accessibility (matches globals.css)
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-2 focus-visible:ring-offset-ink'
+      )}
+    >
+      <span className="block h-full w-full transition-transform duration-400 ease-lookbook group-hover:scale-[1.04] motion-reduce:group-hover:scale-100">
+        <Image
+          src={post.image.src}
+          alt={post.image.alt}
+          fill
+          sizes="(min-width: 1024px) 16vw, (min-width: 768px) 33vw, 50vw"
+          className="object-cover"
+        />
+      </span>
+    </a>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Placeholder — 6 "COMING SOON" tiles (no embed code, no posts)
+// ──────────────────────────────────────────────────────────────────────
+
 function PlaceholderGrid() {
   return (
     <div className="grid grid-cols-3 gap-2 md:grid-cols-6 md:gap-3">
@@ -106,4 +164,15 @@ function PlaceholderGrid() {
       ))}
     </div>
   );
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Live embed — EmbedSocial or other third-party widget
+// ──────────────────────────────────────────────────────────────────────
+
+function LiveEmbed({ embedCode }: { embedCode: string }) {
+  // dangerouslySetInnerHTML is safe here because the embed code
+  // comes from a trusted config file (siteConfig), not user input.
+  // Same trust level as any <script> tag in <head>.
+  return <div dangerouslySetInnerHTML={{ __html: embedCode }} />;
 }
