@@ -320,42 +320,42 @@ export const siteConfig = {
       posts: [
         {
           image: {
-            src: 'https://picsum.photos/seed/ig-1/800/800',
+            src: '/instagram/instagram-1.jpg',
             alt: 'Distorted Instagram post 1',
           },
           href: 'https://www.instagram.com/distorted.global/',
         },
         {
           image: {
-            src: 'https://picsum.photos/seed/ig-2/800/800',
+            src: '/instagram/instagram-2.jpg',
             alt: 'Distorted Instagram post 2',
           },
           href: 'https://www.instagram.com/distorted.global/',
         },
         {
           image: {
-            src: 'https://picsum.photos/seed/ig-3/800/800',
+            src: '/instagram/instagram-3.jpg',
             alt: 'Distorted Instagram post 3',
           },
           href: 'https://www.instagram.com/distorted.global/',
         },
         {
           image: {
-            src: 'https://picsum.photos/seed/ig-4/800/800',
+            src: '/instagram/instagram-4.jpg',
             alt: 'Distorted Instagram post 4',
           },
           href: 'https://www.instagram.com/distorted.global/',
         },
         {
           image: {
-            src: 'https://picsum.photos/seed/ig-5/800/800',
+            src: '/instagram/instagram-5.jpg',
             alt: 'Distorted Instagram post 5',
           },
           href: 'https://www.instagram.com/distorted.global/',
         },
         {
           image: {
-            src: 'https://picsum.photos/seed/ig-6/800/800',
+            src: '/instagram/instagram-6.jpg',
             alt: 'Distorted Instagram post 6',
           },
           href: 'https://www.instagram.com/distorted.global/',
