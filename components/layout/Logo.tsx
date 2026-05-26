@@ -11,19 +11,17 @@ import { cn } from '@/lib/cn';
  * light sections. The site is dark by default, so the default variant
  * is 'light' (white wordmark).
  *
- * NOTE — current asset state (owner action item):
- * The current PNG assets at /public/logos/ are JPEG files renamed to
- * .png — they do NOT have alpha channels. The white variant has a
- * pure-black background that blends into --ink (#212529) acceptably
- * well, but on close inspection a faint rectangular edge is visible.
+ * Asset note:
+ * The white variant is an SVG file at /public/logos/. The SVG wraps
+ * a raster (PNG) inside an alpha mask, so it renders with proper
+ * transparency on dark backgrounds (no visible black box) but is not
+ * truly vector — at very large display sizes it can look soft. At
+ * the nav size (108px) and footer size (140px) this is not visible.
  *
- * For final launch, the owner should provide proper transparent
- * PNGs or (better) SVG versions of the wordmark. When those land,
- * just replace the files at /public/logos/ — no code change needed
- * if filenames are kept.
- *
- * Wrapped in <Link href="/"> by default. Set asLink={false} where
- * inappropriate (e.g. if the logo is already inside a link tree).
+ * The 'dark' variant still points at the legacy JPEG-renamed-to-PNG
+ * file. It is not currently used anywhere — both Nav and Footer use
+ * the default ('light') variant. If a dark-background-on-light page
+ * is ever added, supply a matching SVG and update the path below.
  */
 interface LogoProps {
   /**
@@ -59,7 +57,7 @@ export function Logo({
 
   const src =
     variant === 'light'
-      ? '/logos/distorted-wordmark-white.png'
+      ? '/logos/distorted-wordmark-white.svg'
       : '/logos/distorted-wordmark-black.png';
 
   const img = (
