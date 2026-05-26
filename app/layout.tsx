@@ -1,7 +1,4 @@
-import { CartProvider } from "@/context/CartContext";
-import CartDrawer from "@/components/CartDrawer";
-import CartButton from "@/components/CartButton";
-import "@/styles/shop.css"; 
+
 import type { Metadata, Viewport } from 'next';
 import { Inter, Bodoni_Moda } from 'next/font/google';
 import { Nav } from '@/components/layout/Nav';
