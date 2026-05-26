@@ -2,7 +2,8 @@ import type { Config } from 'tailwindcss';
 
 /**
  * Tailwind configuration — implements the locked design system from
- * /distorted-global-spec.md Section 2.
+ * /distorted-global-spec.md Section 2 (with font-system revision
+ * applied: Bebas Neue / Bodoni Moda / Satoshi).
  *
  * Tokens are organized to mirror the spec exactly. Where the spec
  * specifies values that don't have a 1:1 Tailwind primitive (e.g. the
@@ -10,6 +11,7 @@ import type { Config } from 'tailwindcss';
  * named tokens (e.g. `text-display-xl`) so component code reads as
  * self-documenting design intent rather than raw numbers.
  */
+
 const config: Config = {
   content: [
     './app/**/*.{ts,tsx}',
@@ -27,7 +29,6 @@ const config: Config = {
       xl: '1440px',
       '2xl': '1680px',
     },
-
     // ────────────────────────────────────────────────────────────────
     // Container max-widths (spec §2 Spacing & Grid)
     // 1680px hero/lookbook, 1440px shop — applied per page.
@@ -46,61 +47,68 @@ const config: Config = {
         '2xl': '1680px',
       },
     },
-
     extend: {
       // ──────────────────────────────────────────────────────────────
       // Color palette (spec §2 — LOCKED)
-      // Raw brand tokens map 1:1 to spec; semantic tokens layer on top
-      // so components express intent (`bg-background`) rather than
-      // raw color (`bg-ink`). Both work; semantic is preferred.
       // ──────────────────────────────────────────────────────────────
       colors: {
-        // Raw brand palette
-        ink: '#212529', //   primary dark — cool near-black
-        paper: '#E9ECEF', // primary light — cool off-white
-        mist: '#CED4DA', //  light grey — secondary surfaces
-        steel: '#6C757D', // mid grey — secondary text, borders
-        smoke: '#1A1D20', // deeper than ink, elevated dark surfaces
-        shadow: '#0F1112', // deepest, hero overlays
-
-        // Earth accents — lookbook/packaging only, NEVER UI (spec §2)
+        ink: '#212529',
+        paper: '#E9ECEF',
+        mist: '#CED4DA',
+        steel: '#6C757D',
+        smoke: '#1A1D20',
+        shadow: '#0F1112',
         khaki: '#A89F7E',
         sage: '#6B7566',
         olive: '#4A5240',
-
-        // Error/alert — used by form input error state (Prompt 2 §2).
-        // Not part of locked spec §2 palette; introduced here as a UI
-        // utility token. Keep usage limited to error states only.
         alert: '#B84A3E',
-
-        // Semantic tokens — site is dark-by-default per spec §2.
-        // Light-mode overrides live in globals.css under .light-section.
-        background: '#212529', // ink
-        foreground: '#E9ECEF', // paper
-        muted: '#6C757D', //     steel — secondary text
-        'muted-foreground': '#CED4DA', // mist
-        border: '#1A1D20', //    smoke — borders on dark surfaces
-        'surface-elevated': '#1A1D20', // smoke
-        'surface-deep': '#0F1112', //    shadow
+        background: '#212529',
+        foreground: '#E9ECEF',
+        muted: '#6C757D',
+        'muted-foreground': '#CED4DA',
+        border: '#1A1D20',
+        'surface-elevated': '#1A1D20',
+        'surface-deep': '#0F1112',
       },
 
       // ──────────────────────────────────────────────────────────────
-      // Font families (spec §2 — LOCKED)
-      //   Display: Bodoni 72 Oldstyle (local) → Bodoni Moda (Google fallback)
-      //   Body/UI: Inter (Google, variable 100-900)
-      // The actual font-face declarations and Google imports live in
-      // app/layout.tsx and globals.css. The fallback chains here
-      // protect against font-loading failures.
+      // Font families (Nov 2026 revision — see app/layout.tsx for the
+      // full font-system rationale)
+      //
+      //   font-display → Bebas Neue
+      //     Headlines, hero text, drop labels, nav, section labels.
+      //     Inherently uppercase by design — no need to add `uppercase`
+      //     class alongside `font-display`.
+      //
+      //   font-serif → Bodoni Moda
+      //     Editorial prose. Product descriptions, brand statement,
+      //     lookbook text breaks, success states.
+      //
+      //   font-sans → Satoshi (loaded via Fontshare CDN in layout.tsx)
+      //     Functional text. Buttons, form labels, captions, footer,
+      //     prices, small UI text.
+      //
+      // The CSS variables (--font-display, --font-serif) come from
+      // next/font/google in app/layout.tsx. Satoshi is referenced by
+      // family name directly since it loads via <link> not next/font.
       // ──────────────────────────────────────────────────────────────
       fontFamily: {
         display: [
-          'Bodoni 72 Oldstyle',
+          'var(--font-display)',
+          'Bebas Neue',
+          'Impact',
+          'Haettenschweiler',
+          'sans-serif',
+        ],
+        serif: [
+          'var(--font-serif)',
           'Bodoni Moda',
           'Didot',
           'Bodoni MT',
           'serif',
         ],
         sans: [
+          'Satoshi',
           'Inter',
           'ui-sans-serif',
           'system-ui',
@@ -110,10 +118,7 @@ const config: Config = {
       },
 
       // ──────────────────────────────────────────────────────────────
-      // Type scale (spec §2 — LOCKED, desktop sizes)
-      // Format: [size, { lineHeight, letterSpacing }]
-      // Mobile down-scale (~60%) handled in component code via
-      // responsive variants per spec §11.
+      // Type scale (spec §2 — desktop sizes)
       // ──────────────────────────────────────────────────────────────
       fontSize: {
         'display-xl': [
@@ -124,49 +129,29 @@ const config: Config = {
         'display-m': ['40px', { lineHeight: '1.15', letterSpacing: '0' }],
         heading: ['24px', { lineHeight: '1.3', letterSpacing: '0' }],
         body: ['15px', { lineHeight: '1.55', letterSpacing: '0' }],
-        ui: ['13px', { lineHeight: '1.4', letterSpacing: '0.04em' }], //   uppercase
-        caption: ['11px', { lineHeight: '1.4', letterSpacing: '0.08em' }], // uppercase
-
-        // Nav-specific tracking variant — spec §3 uses 0.08em for nav
-        // links (vs 0.04em for general UI). Kept as its own token.
+        ui: ['13px', { lineHeight: '1.4', letterSpacing: '0.04em' }],
+        caption: ['11px', { lineHeight: '1.4', letterSpacing: '0.08em' }],
         nav: ['13px', { lineHeight: '1.4', letterSpacing: '0.08em' }],
       },
 
       // ──────────────────────────────────────────────────────────────
-      // Spacing scale (spec §2 — base 8px)
-      // Tailwind's default 4px-step scale already covers most of this;
-      // we expose the spec's explicit tokens by name for clarity in
-      // section padding and lookbook spacing decisions.
+      // Spacing
       // ──────────────────────────────────────────────────────────────
       spacing: {
-        // Spec's explicit scale: 4, 8, 16, 24, 32, 48, 64, 96, 128, 160, 192, 256
-        // Tailwind covers 0-96 already. Adding the larger ones:
         '128': '128px',
-        '160': '160px', // section padding desktop
+        '160': '160px',
         '192': '192px',
         '256': '256px',
-        // Mobile section padding helper
         'section-mobile': '80px',
         'section-desktop': '160px',
       },
 
-      // ──────────────────────────────────────────────────────────────
-      // Border radius — spec §2 buttons use "1px max" i.e. essentially
-      // sharp. We override default 'sm' to 1px and avoid using larger.
-      // ──────────────────────────────────────────────────────────────
       borderRadius: {
         none: '0',
         sm: '1px',
         DEFAULT: '1px',
       },
 
-      // ──────────────────────────────────────────────────────────────
-      // Animation / motion (spec §2 — LOCKED)
-      //   Fade-in on scroll: 600ms ease-out, 20px upward translate
-      //   Image hover (general): 800ms cross-fade
-      //   Lookbook hover: 1.04 scale, 400ms cubic-bezier(0.22,1,0.36,1)
-      //   Page transitions: 300ms fade
-      // ──────────────────────────────────────────────────────────────
       transitionTimingFunction: {
         lookbook: 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
@@ -191,10 +176,6 @@ const config: Config = {
         'fade-in': 'fade-in 600ms ease-out forwards',
       },
 
-      // ──────────────────────────────────────────────────────────────
-      // Lookbook hover shadow (spec §2)
-      //   0 30px 60px rgba(0,0,0,0.4)
-      // ──────────────────────────────────────────────────────────────
       boxShadow: {
         lookbook: '0 30px 60px rgba(0, 0, 0, 0.4)',
       },
