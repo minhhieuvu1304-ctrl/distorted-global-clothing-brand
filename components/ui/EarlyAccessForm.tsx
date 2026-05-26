@@ -217,11 +217,11 @@ export function EarlyAccessForm({
         }
       >
         {headline && (
-          <h2 className="mb-3 font-display text-display-m uppercase md:text-display-l">
+          <h2 className="mb-3 font-display text-display-m md:text-display-l">
             {headline}
           </h2>
         )}
-        <p className="font-display text-display-m text-paper md:text-display-l">
+        <p className="font-serif text-display-m text-paper md:text-display-l">
           You&rsquo;re on the list.
         </p>
       </div>
@@ -239,7 +239,7 @@ export function EarlyAccessForm({
       className={cn('w-full max-w-[480px]', className)}
     >
       {headline && (
-        <h2 className="mb-3 font-display text-display-m uppercase md:text-display-l">
+        <h2 className="mb-3 font-display text-display-m md:text-display-l">
           {headline}
         </h2>
       )}
