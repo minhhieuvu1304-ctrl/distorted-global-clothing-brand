@@ -1,63 +1,78 @@
-import { Hero } from '@/components/sections/Hero';
-import { BrandStatement } from '@/components/sections/BrandStatement';
-import { EarlyAccess } from '@/components/sections/EarlyAccess';
-import { siteConfig, type FooterLink } from '@/config/site.config';
+import { Suspense } from 'react';
+import type { Metadata } from 'next';
+import { ShopClient } from '@/components/sections/ShopClient';
+import { fetchAllProducts, isShopifyConfigured } from '@/lib/shopify';
+import { siteConfig } from '@/config/site.config';
+
+export const metadata: Metadata = {
+  title: 'Shop',
+  description: `Shop the ${siteConfig.shop.headline} collection — luxury cut & sew with darker streetwear sensibility.`,
+};
 
 /**
- * Homepage — distorted.global landing page.
+ * /shop — catalog page.
  *
- * Spec §4 sequence (locked):
- *   1. Hero (100vh)               — full-screen video, overlay text
- *   2. Brand Statement (~80vh)    — editorial moment
- *   3. Early Access (~80vh)       — capture form
- *   4. Footer                     — provided by app/layout.tsx
+ * Spec §5 + Prompt 5.
  *
- * The Footer is rendered globally in the root layout, so this page
- * doesn't include it directly.
+ * Server component: fetches the full product list (cached 60s via the
+ * fetch wrapper's `next.revalidate`) and hands it to ShopClient for
+ * filter/modal URL state management. The fetch is small (~50 products
+ * v1 scale per spec) and Shopify image URLs are CDN-served; client-
+ * side filtering is faster than per-filter network round trips.
  *
- * Lenis smooth scroll (configured in /components/layout/SmoothScrollProvider)
- * handles the slow inertia between sections per the locked motion language.
+ * The header is rendered here (server) since it's static content from
+ * siteConfig — no need to ship it through the client boundary.
  *
- * No FadeIn wraps the page itself — Hero owns its own fade-in
- * sequence; Brand Statement and Early Access each wrap their content
- * in <FadeIn /> internally so reveals fire as those sections enter
- * the viewport.
- *
- * JSON-LD Organization is emitted here for SEO — schema.org Organization
- * gives Google a clean signal for the brand identity (sitelinks, knowledge
- * panel). Embedded as a <script type="application/ld+json"> per the
- * standard. Next.js doesn't strip these.
+ * Suspense boundary wraps ShopClient because it uses useSearchParams,
+ * which Next 14 requires to be inside a Suspense boundary at the
+ * page level for proper streaming.
  */
-export default function HomePage() {
-  const orgJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: siteConfig.meta.siteName,
-    url: siteConfig.meta.url,
-    logo: `${siteConfig.meta.url}/logos/Distorted_D_logo_white.svg`,
-    description: siteConfig.meta.description,
-    sameAs: (
-      siteConfig.footer.columns.find((c) => c.heading === 'FOLLOW')?.links as
-        | readonly FooterLink[]
-        | undefined
-    )
-      ?.filter((l) => l.external)
-      .map((l) => l.href),
-  };
+
+export const revalidate = 60;
+
+export default async function ShopPage() {
+  const products = await fetchAllProducts();
+  const unconfigured = !isShopifyConfigured();
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        // JSON.stringify produces safe content because the values are
-        // all sourced from siteConfig (developer-controlled) — no user
-        // input flows in. This is the standard pattern documented in
-        // the Next.js docs for emitting JSON-LD.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
-      <Hero />
-      <BrandStatement />
-      <EarlyAccess />
+      {/* Header — solid ink, ~30vh, Bodoni headline. Top padding
+          accounts for the fixed nav (h-16 mobile / h-20 desktop). */}
+      <header
+        aria-label="Shop"
+        className="flex min-h-[30vh] items-end bg-ink pt-24 md:pt-32"
+      >
+        <div className="mx-auto w-full max-w-[1440px] px-4 pb-12 md:px-6 md:pb-16">
+          <h1 className="font-display text-[40px] leading-[1.05] tracking-[-0.01em] text-paper md:text-[64px] lg:text-[72px]">
+            {siteConfig.shop.headline}
+          </h1>
+        </div>
+      </header>
+
+      <Suspense fallback={<ShopFallback />}>
+        <ShopClient products={products} unconfigured={unconfigured} />
+      </Suspense>
     </>
+  );
+}
+
+/**
+ * Suspense fallback — renders a card-grid skeleton during the brief
+ * moment before useSearchParams hydrates. Real loading is fast since
+ * data is fetched server-side, so this is rarely visible.
+ */
+function ShopFallback() {
+  return (
+    <div className="mx-auto max-w-[1440px] px-4 pb-32 pt-12 md:px-6 md:pt-16">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-12 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="space-y-4">
+            <div className="aspect-[3/2] w-full bg-smoke" />
+            <div className="h-5 w-3/4 bg-smoke" />
+            <div className="h-4 w-16 bg-smoke" />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
