@@ -48,6 +48,7 @@
  */
 
 import type { LookbookSection, LookbookImage } from '@/lib/types';
+import { shopifyImage } from '@/lib/shopify-images';
 
 // Placeholder image factory — generates picsum URLs from a seed so
 // each image is stable across reloads. At launch, replace these
@@ -88,8 +89,18 @@ export const lookbookSections: LookbookSection[] = [
     type: 'masonry',
     desktopColumns: 3,
     items: [
+      // ─────────────────────────────────────────────────────────────
+      // PILOT — first real Shopify-hosted image. Validates the
+      // shopifyImage() helper end-to-end. To replace with a final
+      // production image, swap the URL and alt text. To migrate any
+      // other entry in this file, change `ph(...)` to `shopifyImage(...)`
+      // and paste the URL from Shopify Admin → Content → Files.
+      // ─────────────────────────────────────────────────────────────
       {
-        image: ph('look-01', 'Look 01 — black hoodie, full silhouette'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/dscn5716.jpg?v=1779796639',
+          'Pilot image — Shopify CDN pipeline test'
+        ),
         aspect: 'tall',
       },
       {
