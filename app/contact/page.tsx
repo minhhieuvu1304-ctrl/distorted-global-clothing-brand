@@ -52,7 +52,7 @@ function ContactHeader() {
       className="flex min-h-[30vh] items-end bg-ink pt-24 md:pt-32"
     >
       <div className="mx-auto w-full max-w-[1440px] px-4 pb-12 md:px-6 md:pb-16">
-        <h1 className="font-display text-[40px] uppercase leading-[1.05] tracking-[-0.01em] text-paper md:text-[64px] lg:text-[72px]">
+        <h1 className="font-display text-[40px] leading-[1.05] tracking-[-0.01em] text-paper md:text-[64px] lg:text-[72px]">
           {siteConfig.contact.headline}
         </h1>
       </div>
@@ -115,7 +115,7 @@ function ContactInquiriesSection() {
             <a
               href={`mailto:${email}`}
               className={cn(
-                'self-start font-display text-paper',
+                'self-start font-serif text-paper',
                 'text-[24px] leading-tight md:text-[32px] lg:text-[40px]',
                 'underline-offset-[4px] transition-all duration-300 ease-out',
                 'hover:underline'
