@@ -104,7 +104,7 @@ export const lookbookSections: LookbookSection[] = [
         aspect: 'tall',
       },
       {
-        image: ph('look-02', 'Look 02 — three-quarter angle'),
+        image: shopifyImage('https://admin.shopify.com/store/distorted-global/content/files/27252030275661?selectedView=all', 'Black hoodie with the beach'),
         aspect: 'medium',
       },
       { image: ph('look-03', 'Look 03 — back view, hood up'), aspect: 'tall' },
