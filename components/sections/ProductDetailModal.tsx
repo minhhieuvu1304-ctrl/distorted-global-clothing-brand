@@ -288,12 +288,12 @@ function PdpInfo({ product }: { product: Product }) {
         </p>
       )}
 
-      {/* Product name — Bodoni 28px sentence case */}
-      <h2 className="font-display text-[28px] leading-tight text-paper">
+      {/* Product name — Bodoni Moda 28px sentence case */}
+      <h2 className="font-serif text-[28px] leading-tight text-paper">
         {product.title}
       </h2>
 
-      {/* Price — Inter 16px paper */}
+      {/* Price — Satoshi 16px paper */}
       <p className="font-sans text-[16px] text-paper">
         {formatPrice(product.priceCents)}
       </p>
@@ -565,7 +565,7 @@ function NotifyWhenAvailableForm({
 
   if (submitted) {
     return (
-      <p className="font-display text-[20px] text-paper" role="status">
+      <p className="font-serif text-[20px] text-paper" role="status">
         We&rsquo;ll notify you when it&rsquo;s back.
       </p>
     );

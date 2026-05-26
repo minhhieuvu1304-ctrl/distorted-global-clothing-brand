@@ -54,7 +54,7 @@ export function ProductCard({
       <div className={cn('w-full', className)}>
         <div className="aspect-[3/2] w-full bg-smoke" aria-hidden="true" />
         <div className="mt-4">
-          <p className="font-display text-paper">{product.title}</p>
+          <p className="font-serif text-paper">{product.title}</p>
           <p className="mt-1 font-sans text-[14px] text-mist">
             {formatPrice(product.priceCents)}
           </p>
@@ -114,7 +114,7 @@ export function ProductCard({
       <div className="mt-4">
         <p
           className={cn(
-            'font-display text-paper',
+            'font-serif text-paper',
             size === 'small' ? 'text-[16px]' : 'text-[18px] md:text-[20px]'
           )}
         >

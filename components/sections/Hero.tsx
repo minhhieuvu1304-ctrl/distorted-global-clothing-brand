@@ -112,7 +112,7 @@ export function Hero() {
           {/* Headline — fade in immediately on mount */}
           <h1
             className={cn(
-              'font-display uppercase text-paper',
+              'font-display text-paper',
               'text-[56px] leading-[1.05] tracking-[-0.01em] md:text-display-xl',
               !reduced && 'opacity-0',
               !reduced && mounted && 'animate-hero-fade-in'
@@ -125,7 +125,7 @@ export function Hero() {
           {/* Subhead — Bodoni italic, mist, 200ms after headline */}
           <p
             className={cn(
-              'mt-3 font-display italic text-mist md:mt-4',
+              'mt-3 font-serif italic text-mist md:mt-4',
               'text-[18px] leading-[1.4] md:text-[20px]',
               !reduced && 'opacity-0',
               !reduced && mounted && 'animate-hero-fade-in'

@@ -38,7 +38,7 @@ export function BrandStatement() {
             (Fear of God, A-COLD-WALL*) per spec §1. Mobile drops the
             indent so the line breathes within tighter gutters.
           */}
-          <p className="font-display text-paper md:max-w-[80%] md:pl-[8%] lg:pl-[12%]">
+          <p className="font-serif text-paper md:max-w-[80%] md:pl-[8%] lg:pl-[12%]">
             <span className="block text-[36px] leading-[1.15] md:text-[56px] md:leading-[1.1] lg:text-[64px]">
               {copy}
             </span>

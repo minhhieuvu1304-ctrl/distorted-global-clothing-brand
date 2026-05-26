@@ -201,7 +201,7 @@ function FilterBar({ activeSlug, onChange }: FilterBarProps) {
 function NoMatches({ onClear }: { onClear: () => void }) {
   return (
     <div className="flex min-h-[40vh] flex-col items-start justify-center gap-4">
-      <p className="font-display text-[40px] text-paper md:text-[56px]">
+      <p className="font-serif text-[40px] text-paper md:text-[56px]">
         No items match.
       </p>
       <button
@@ -218,7 +218,7 @@ function NoMatches({ onClear }: { onClear: () => void }) {
 function CatalogUnavailable() {
   return (
     <div className="flex min-h-[40vh] flex-col items-start justify-center gap-4">
-      <p className="font-display text-[40px] text-paper md:text-[56px]">
+      <p className="font-serif text-[40px] text-paper md:text-[56px]">
         Catalog temporarily unavailable.
       </p>
       <p className="font-sans text-[14px] text-mist">
