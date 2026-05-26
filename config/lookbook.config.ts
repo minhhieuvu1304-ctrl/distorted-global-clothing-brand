@@ -104,24 +104,24 @@ export const lookbookSections: LookbookSection[] = [
         aspect: 'tall',
       },
       {
-        image: shopifyImage('https://admin.shopify.com/store/distorted-global/content/files/27252030275661?selectedView=all', 'Black hoodie with the beach'),
+        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-beach.heic?v=1779800477', 'Black hoodie with the beach'),
         aspect: 'medium',
       },
-      { image: ph('look-03', 'Look 03 — back view, hood up'), aspect: 'tall' },
+      { image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-black-rooftop.jpg?v=1779800277', 'Black hoodie om rooftop'),
       {
-        image: ph('detail-01', 'Embroidery detail — chest panel'),
+        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-group-black.jpg?v=1779800251', 'Hoodie showcase'),
         aspect: 'short',
       },
       {
-        image: ph('look-04', 'Look 04 — oversized fit, side profile'),
+        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_5261.jpg?v=1779801621', 'Fashion show'),
         aspect: 'tall',
       },
       {
-        image: ph('look-05', 'Look 05 — walking shot, motion blur'),
+       image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_1858.heic?v=1779801623', 'Belt showcase'),
         aspect: 'medium',
       },
-      { image: ph('detail-02', 'Stitching detail — sleeve'), aspect: 'square' },
-      { image: ph('look-06', 'Look 06 — seated portrait'), aspect: 'tall' },
+      {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_7832.heic?v=1779801623', 'Cap showcase'), aspect: 'square' },
+      {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/Distorted_standing_logo_1_X-Ray.jpg?v=1779801621', 'Standing logo'), aspect: 'tall' },
       {
         image: ph('look-07', 'Look 07 — bust crop, hood down'),
         aspect: 'medium',
