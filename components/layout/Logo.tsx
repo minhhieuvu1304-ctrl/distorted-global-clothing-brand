@@ -5,39 +5,47 @@ import { cn } from '@/lib/cn';
 /**
  * Logo
  *
- * Renders the Distorted wordmark. Per spec §2 logo system:
- *   - The logo SVG must MATCH its section's background (white logo on
- *     dark sections; dark logo on light sections).
- *   - The site is dark by default (spec §2), so the default variant
- *     here is 'light' (i.e. the white-on-dark logo file).
- *   - The two SVG files include embedded background rectangles that
- *     are intentionally kept; they ensure the logo always has the
- *     correct backdrop even if a section's background isn't perfectly
- *     opaque. (Owner action item §15: strip these later for a clean
- *     transparent SVG once the design is final.)
+ * Renders the Distorted wordmark.
  *
- * Wrapped in a Link to / so clicking the logo always returns home —
- * standard convention; if a particular usage shouldn't be linked,
- * pass `asLink={false}`.
+ * Per spec §2 logo system: white logo on dark sections, dark logo on
+ * light sections. The site is dark by default, so the default variant
+ * is 'light' (white wordmark).
+ *
+ * NOTE — current asset state (owner action item):
+ * The current PNG assets at /public/logos/ are JPEG files renamed to
+ * .png — they do NOT have alpha channels. The white variant has a
+ * pure-black background that blends into --ink (#212529) acceptably
+ * well, but on close inspection a faint rectangular edge is visible.
+ *
+ * For final launch, the owner should provide proper transparent
+ * PNGs or (better) SVG versions of the wordmark. When those land,
+ * just replace the files at /public/logos/ — no code change needed
+ * if filenames are kept.
+ *
+ * Wrapped in <Link href="/"> by default. Set asLink={false} where
+ * inappropriate (e.g. if the logo is already inside a link tree).
  */
 interface LogoProps {
   /**
-   * 'light' = white logo SVG, intended for dark backgrounds (default).
-   * 'dark'  = dark logo SVG, intended for light backgrounds.
+   * 'light' = white wordmark, intended for dark backgrounds (default).
+   * 'dark'  = dark wordmark, intended for light backgrounds.
    */
   variant?: 'light' | 'dark';
-  /** Width in px. Below 32px the logo should use a simplified mark per
-   *  spec §2 — for now we just render the same SVG; refine post-launch. */
+  /** Width in px. The wordmark is ~4:3 aspect, height is auto-computed. */
   width?: number;
-  /** Optional override of computed height (otherwise preserves aspect). */
+  /** Override of computed height if needed. */
   height?: number;
-  /** Wrap in <Link href="/">. Defaults to true. */
+  /** Wrap in <Link href="/">. Default true. */
   asLink?: boolean;
-  /** Extra classes for the wrapping element. */
+  /** Extra classes for the wrapper. */
   className?: string;
-  /** Override the alt text. Default: 'Distorted'. */
+  /** Override alt text. Default: 'Distorted'. */
   alt?: string;
 }
+
+// Native aspect ratio of the provided wordmark assets (577×432, ~4:3).
+// Used to compute height from width so callers can supply just one.
+const WORDMARK_RATIO = 577 / 432;
 
 export function Logo({
   variant = 'light',
@@ -47,13 +55,12 @@ export function Logo({
   className,
   alt = 'Distorted',
 }: LogoProps) {
-  // SVG aspect ratio is 480:160 = 3:1
-  const computedHeight = height ?? Math.round(width / 3);
+  const computedHeight = height ?? Math.round(width / WORDMARK_RATIO);
 
   const src =
     variant === 'light'
-      ? '/logos/Distorted_D_logo_white.svg'
-      : '/logos/Distorted_D_logo_black.svg';
+      ? '/logos/distorted-wordmark-white.png'
+      : '/logos/distorted-wordmark-black.png';
 
   const img = (
     <Image
@@ -63,6 +70,7 @@ export function Logo({
       height={computedHeight}
       priority
       className="block"
+      style={{ width, height: computedHeight }}
     />
   );
 

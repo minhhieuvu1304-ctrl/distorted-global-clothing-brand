@@ -163,7 +163,7 @@ function CartLineRow({ line, onUpdateQty, onRemove }: CartLineRowProps) {
         <div>
           <Link
             href={`/shop?product=${line.productHandle}`}
-            className="font-display text-[15px] leading-tight text-paper hover:opacity-80"
+            className="font-serif text-[15px] leading-tight text-paper hover:opacity-80"
           >
             {line.productTitle}
           </Link>
@@ -223,7 +223,7 @@ function CartLineRow({ line, onUpdateQty, onRemove }: CartLineRowProps) {
 function EmptyState({ onClose }: { onClose: () => void }) {
   return (
     <div className="flex flex-col items-start gap-6 pt-8">
-      <p className="font-display text-display-m text-paper">
+      <p className="font-serif text-display-m text-paper">
         Your cart is empty.
       </p>
       <Button
