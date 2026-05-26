@@ -1,6 +1,5 @@
-
 import type { Metadata, Viewport } from 'next';
-import { Inter, Bodoni_Moda } from 'next/font/google';
+import { Bebas_Neue, Bodoni_Moda } from 'next/font/google';
 import { Nav } from '@/components/layout/Nav';
 import { Footer } from '@/components/layout/Footer';
 import { SmoothScrollProvider } from '@/components/layout/SmoothScrollProvider';
@@ -14,33 +13,43 @@ import '@/styles/globals.css';
  * Root layout
  *
  * Per spec §2: dark by default (ink bg, paper text).
- * Per Prompt deliverable §10: nav + footer global, viewport + favicon
- * + SEO defaults set, locked title and description.
  *
- * Fonts (Prompt deliverable §3):
- *   - Inter via next/font/google, variable weight 100-900.
- *   - Bodoni Moda via next/font/google as the web fallback for the
- *     locked display font "Bodoni 72 Oldstyle". The local Bodoni 72
- *     @font-face declaration in globals.css means Apple users will
- *     see the real Bodoni 72; everyone else gets Bodoni Moda.
+ * FONT SYSTEM (Nov 2026 revision):
  *
- * next/font handles font preloading, FOUT prevention, and CSS variable
- * exposure for us. We attach the variables to <html> so the Tailwind
- * `font-sans` and `font-display` tokens resolve correctly everywhere.
+ *   --font-display  Bebas Neue        Headlines, hero text, drop labels,
+ *                                     nav links, section labels. Inherently
+ *                                     uppercase by design, so `uppercase`
+ *                                     class is redundant when paired with
+ *                                     `font-display`.
+ *
+ *   --font-serif    Bodoni Moda       Editorial prose. Product descriptions,
+ *                                     brand statement, lookbook text breaks,
+ *                                     success states, privacy page headings.
+ *
+ *   --font-sans     Satoshi           Functional text. Buttons, form labels,
+ *                                     captions, footer columns, prices,
+ *                                     small UI text. Loaded via a CSS
+ *                                     <link> below since Satoshi isn't on
+ *                                     Google Fonts (Fontshare hosts it).
+ *
+ * Bebas Neue and Bodoni Moda use next/font/google for self-hosting,
+ * font-display: swap, and zero-layout-shift loading. Satoshi loads
+ * from Fontshare's CDN — slightly less optimal than next/font but
+ * avoids needing to bundle the woff2 files.
  */
 
-const inter = Inter({
+const bebasNeue = Bebas_Neue({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-inter',
-  weight: ['400', '500', '600', '700'],
+  variable: '--font-display',
+  // Bebas Neue is only available in regular weight (400).
+  weight: ['400'],
 });
 
 const bodoniModa = Bodoni_Moda({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-bodoni',
-  // Italic is needed for the hero subhead per spec §4.
+  variable: '--font-serif',
   style: ['normal', 'italic'],
   weight: ['400', '500', '600', '700'],
 });
@@ -99,12 +108,31 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      // Attach next/font CSS variables. The Tailwind font-family
-      // tokens reference these names indirectly through the system
-      // font stack (the fonts get registered with their actual
-      // family names, e.g. 'Inter', so `font-sans` resolves them).
-      className={`${inter.variable} ${bodoniModa.variable}`}
+      // Attach next/font CSS variables (Bebas Neue → --font-display,
+      // Bodoni Moda → --font-serif). Satoshi is wired via <link> in
+      // <head> below, exposing the family name 'Satoshi' that the
+      // Tailwind font-sans stack picks up.
+      className={`${bebasNeue.variable} ${bodoniModa.variable}`}
     >
+      <head>
+        {/*
+          Satoshi from Fontshare. Free, commercial-OK, but not on
+          Google Fonts so we can't use next/font/google for it.
+          Loading via <link> still gets preloaded + browser-cached.
+          Owner action item: if perf becomes a concern, download the
+          Satoshi woff2 files into /public/fonts/ and swap to
+          next/font/local for proper self-hosting.
+        */}
+        <link
+          rel="preconnect"
+          href="https://api.fontshare.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
+        />
+      </head>
       <body className="bg-ink text-paper antialiased">
         {/*
           CartProvider wraps everything so Nav (cart count badge) and
