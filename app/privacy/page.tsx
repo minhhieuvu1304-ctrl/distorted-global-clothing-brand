@@ -25,7 +25,7 @@ export default function PrivacyPage() {
       <div className="mx-auto max-w-[800px] px-6 pb-32 md:px-8">
         {/* Header */}
         <header className="mb-16 md:mb-24">
-          <h1 className="font-display text-[40px] uppercase leading-[1.05] tracking-[-0.01em] text-paper md:text-[64px]">
+          <h1 className="font-display text-[40px] leading-[1.05] tracking-[-0.01em] text-paper md:text-[64px]">
             Privacy
           </h1>
           <p className="mt-6 font-sans text-caption uppercase text-steel">
@@ -134,7 +134,7 @@ function Section({
 }) {
   return (
     <section>
-      <h2 className="mb-4 font-display text-[24px] leading-tight text-paper md:text-[28px]">
+      <h2 className="mb-4 font-serif text-[24px] leading-tight text-paper md:text-[28px]">
         {heading}
       </h2>
       <div className="font-sans text-[14px] leading-relaxed text-mist md:text-[15px]">
