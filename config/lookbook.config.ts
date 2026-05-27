@@ -97,7 +97,9 @@ export const lookbookSections: LookbookSection[] = [
       // and paste the URL from Shopify Admin → Content → Files.
       // ─────────────────────────────────────────────────────────────
       {
-        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/distorted-graffiti-group-garage.jpg?v=1779879257', 'lookbook collection')
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/distorted-graffiti-group-garage.jpg?v=1779879257',
+          'lookbook collection'
         ),
         aspect: 'tall',
       },
@@ -105,7 +107,10 @@ export const lookbookSections: LookbookSection[] = [
         image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-street-lamps.jpg?v=1779879257', 'lookbook collection'),
         aspect: 'medium',
       },
-      { image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/xray-hoodie-logo-garage.jpg?v=1779879257', 'Black hoodie om rooftop'),
+      {
+        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/xray-hoodie-logo-garage.jpg?v=1779879257', 'Black hoodie om rooftop'),
+        aspect: 'tall',
+      },
       {
          image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/sewing-machine-film-setup.jpg?v=1779879257', 'lookbook collection'),
         aspect: 'short',
@@ -121,25 +126,52 @@ export const lookbookSections: LookbookSection[] = [
       {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/graffiti-wall-action-shot.jpg?v=1779879257', 'Graffiti'), aspect: 'square' },
       {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-sunglasses-white-wall.jpg?v=1779879257', 'Standing logo'), aspect: 'tall' },
       {
-        image: ph('look-07', 'Look 07 — bust crop, hood down'),
-        aspect: 'medium',
-      },
-      {
-        image: ph('detail-03', 'Hardware detail — drawstring'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-lying-on-grey-bags.jpg?v=1779879257',
+          'Hoodie lying on grey bags'
+        ),
         aspect: 'short',
       },
-      { image: ph('look-08', 'Look 08 — full body, frontal'), aspect: 'tall' },
       {
-        image: ph('look-09', 'Look 09 — environmental, rooftop'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/four-girls-belts-balcony.jpg?v=1779879258',
+          'Four girls belts balcony'
+        ),
+        aspect: 'short',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/graffiti-wall-group-horizontal.jpg?v=1779879257',
+          'Graffiti wall group horizontal'
+        ),
+        aspect: 'short',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/purple-cloud-clothing-rack.jpg?v=1779879257',
+          'Purple cloud clothing rack'
+        ),
         aspect: 'medium',
       },
-      { image: ph('detail-04', 'Label and care tag'), aspect: 'square' },
       {
-        image: ph('look-10', 'Look 10 — three-quarter, hood up'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-lighter-closeup.jpg?v=1779879257',
+          'Black hoodie lighter closeup'
+        ),
+        aspect: 'square',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/balcony-black-outfit-sky.jpg?v=1779879258',
+          'Balcony black outfit sky'
+        ),
         aspect: 'tall',
       },
       {
-        image: ph('look-11', 'Look 11 — silhouette, low light'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/grey-logo-cap-garden.jpg?v=1779879257',
+          'Grey logo cap garden'
+        ),
         aspect: 'medium',
       },
     ],
@@ -161,26 +193,110 @@ export const lookbookSections: LookbookSection[] = [
     type: 'masonry',
     desktopColumns: 3,
     items: [
-      { image: ph('shirt-01', 'Shirt 01 — full silhouette'), aspect: 'tall' },
-      { image: ph('detail-05', 'Collar detail — open'), aspect: 'short' },
-      { image: ph('shirt-02', 'Shirt 02 — three-quarter'), aspect: 'tall' },
-      { image: ph('shirt-03', 'Shirt 03 — back panel'), aspect: 'medium' },
-      { image: ph('detail-06', 'Cuff and button detail'), aspect: 'square' },
-      { image: ph('shirt-04', 'Shirt 04 — seated portrait'), aspect: 'tall' },
-      { image: ph('look-12', 'Look 12 — hat shot, bust'), aspect: 'medium' },
-      { image: ph('detail-07', 'Cap brim and crown detail'), aspect: 'short' },
-      { image: ph('look-13', 'Look 13 — belt and waist crop'), aspect: 'tall' },
-      { image: ph('detail-08', 'Belt buckle close-up'), aspect: 'square' },
-      { image: ph('look-14', 'Look 14 — full body, hat down'), aspect: 'tall' },
       {
-        image: ph('look-15', 'Look 15 — environmental, alley'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-gallery-wall.jpg?v=1779879257',
+          'Black hoodie gallery wall'
+        ),
+        aspect: 'tall',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-group-garage.jpg?v=1779879257',
+          'Black hoodie group garage'
+        ),
+        aspect: 'short',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-gallery-back.jpg?v=1779879258',
+          'Black hoodie gallery back'
+        ),
+        aspect: 'tall',
+      },
+      {
+        // Tall photo placed in medium slot — mild crop, no extra
+        // short-aspect slot was available in this batch.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/rooftop-night-city-hoodie.jpg?v=1779880430',
+          'Rooftop night city hoodie'
+        ),
         aspect: 'medium',
       },
       {
-        image: ph('detail-09', 'Texture study — fabric weave'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-cutout-template-closeup.jpg?v=1779879258',
+          'Black cutout template closeup'
+        ),
+        aspect: 'square',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-rooftop-back.jpg?v=1779879257',
+          'Black hoodie rooftop back'
+        ),
+        aspect: 'tall',
+      },
+      {
+        // Tall photo placed in medium slot — mild crop.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-street-sunglasses.jpg?v=1779880430',
+          'Black hoodie street sunglasses'
+        ),
+        aspect: 'medium',
+      },
+      {
+        // Screenshot PNG — flagged for quality review against
+        // professional photography. Easy to swap out later.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-duo-parking-garage-screenshot.png?v=1779879258',
+          'Hoodie duo parking garage'
+        ),
         aspect: 'short',
       },
-      { image: ph('look-16', 'Look 16 — dynamic motion'), aspect: 'tall' },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/white-symbol-jacket-patio.jpg?v=1779879258',
+          'White symbol jacket patio'
+        ),
+        aspect: 'tall',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-leaf-cutouts-mat.jpg?v=1779879258',
+          'Black leaf cutouts mat'
+        ),
+        aspect: 'square',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-cap-event-wall.jpg?v=1779879257',
+          'Hoodie cap event wall'
+        ),
+        aspect: 'tall',
+      },
+      {
+        // Tall photo placed in medium slot — mild crop.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/cathedral-plaza-hoodie-cap.jpg?v=1779880430',
+          'Cathedral plaza hoodie cap'
+        ),
+        aspect: 'medium',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/graffiti-group-wall-night.jpg?v=1779880429',
+          'Graffiti group wall night'
+        ),
+        aspect: 'short',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-lamp-columns.jpg?v=1779880429',
+          'Black hoodie lamp columns'
+        ),
+        aspect: 'tall',
+      },
       { image: ph('look-17', 'Look 17 — quiet portrait'), aspect: 'medium' },
     ],
   },
@@ -205,26 +321,78 @@ export const lookbookSections: LookbookSection[] = [
         image: ph('look-18', 'Look 18 — full crew, exterior'),
         aspect: 'medium',
       },
-      { image: ph('detail-10', 'Pocket and hem detail'), aspect: 'short' },
-      { image: ph('look-19', 'Look 19 — paired styling'), aspect: 'tall' },
-      { image: ph('look-20', 'Look 20 — quiet detail crop'), aspect: 'square' },
       {
-        image: ph('look-21', 'Look 21 — final hero, departing'),
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/kitchen-floor-grey-outfit.jpg?v=1779880430',
+          'Kitchen floor grey outfit'
+        ),
+        aspect: 'short',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/low-angle-hoodie-red-belt.jpg?v=1779880430',
+          'Low angle hoodie red belt'
+        ),
         aspect: 'tall',
       },
-      { image: ph('detail-11', 'Final detail study'), aspect: 'short' },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/leopard-belt-closeup.jpg?v=1779880430',
+          'Leopard belt closeup'
+        ),
+        aspect: 'square',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-night-temple-columns.jpg?v=1779880430',
+          'Hoodie night temple columns'
+        ),
+        aspect: 'tall',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/white-logo-shirt-floor.jpg?v=1779880430',
+          'White logo shirt floor'
+        ),
+        aspect: 'short',
+      },
       {
         image: ph('look-22', 'Look 22 — group, three subjects'),
         aspect: 'medium',
       },
-      { image: ph('detail-12', 'Lining and seam'), aspect: 'square' },
-      { image: ph('look-23', 'Look 23 — closing portrait'), aspect: 'tall' },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/assorted-belts-worktable.jpg?v=1779880430',
+          'Assorted belts worktable'
+        ),
+        aspect: 'square',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/studio-hoodie-logo-back.jpg?v=1779880430',
+          'Studio hoodie logo back'
+        ),
+        aspect: 'tall',
+      },
       {
         image: ph('look-24', 'Look 24 — closing motion shot'),
         aspect: 'medium',
       },
-      { image: ph('detail-13', 'Brand label'), aspect: 'short' },
-      { image: ph('look-25', 'Look 25 — final frame'), aspect: 'tall' },
+      {
+        // Screenshot PNG — flagged for quality review.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/parking-garage-hoodie-duo-screenshot.png?v=1779880431',
+          'Parking garage hoodie duo'
+        ),
+        aspect: 'short',
+      },
+      {
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/coastal-rocks-hoodie-back.jpg?v=1779880430',
+          'Coastal rocks hoodie back'
+        ),
+        aspect: 'tall',
+      },
     ],
   },
 ];
