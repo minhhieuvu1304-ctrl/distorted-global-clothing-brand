@@ -68,7 +68,7 @@ export const lookbookSections: LookbookSection[] = [
   // ══════════════════════════════════════════════════════════════════
   {
     type: 'cover',
-    image: ph('aw26-cover', 'AW26 — Distorted lookbook cover'),
+    image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/aw26.jpg?v=1779879256', 'description'),
     title: 'AW26',
     titlePosition: 'bottom-left',
   },
