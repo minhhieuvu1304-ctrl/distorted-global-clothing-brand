@@ -55,10 +55,21 @@ export function Cover({ section, onImageClick }: CoverProps) {
         />
       </div>
 
-      {/* Bottom gradient for title legibility */}
+      {/* Bottom gradient for title legibility.
+          Strengthened (Nov 2026 design review): the AW26 cover image
+          has bright/light areas in the lower-third where the title
+          sits, making text-paper (#E9ECEF) hard to read. Rather than
+          changing the title color (which would break if a future
+          cover is dark), we deepen the gradient itself so the title
+          always sits over a dark-enough surface regardless of what's
+          in the photo.
+
+          Previous: from-shadow/70 via-shadow/30 to-transparent, h-1/2
+          Now: from-shadow/95 via-shadow/55 to-transparent, h-2/3
+          (darker base, deeper falloff, taller coverage area). */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-shadow/70 via-shadow/30 to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-shadow/95 via-shadow/55 to-transparent"
       />
 
       {/* Title overlay */}
