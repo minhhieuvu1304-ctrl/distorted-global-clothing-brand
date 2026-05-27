@@ -7,7 +7,6 @@ import { FullBleedSingle } from './FullBleedSingle';
 import { AsymmetricPair } from './AsymmetricPair';
 import { Triptych } from './Triptych';
 import { DetailStack } from './DetailStack';
-import { TextBreakBand } from './TextBreakBand';
 import { MasonryGrid, type MasonryItem } from './MasonryGrid';
 import { InstagramFeed } from './InstagramFeed';
 import { Closing } from './Closing';
@@ -221,16 +220,20 @@ export function LookbookClient() {
             );
           }
           case 'text-break':
-            // v2 lookbook uses TextBreakBand (compact 30vh band)
-            // instead of the legacy 60-70vh TextBreak. Both accept
-            // the same fields, so swapping is one line.
-            return (
-              <TextBreakBand
-                key={i}
-                copy={section.copy}
-                align={section.align}
-              />
-            );
+            // Text-break interludes hidden per client request
+            // (Nov 2026): the lookbook now reads as an uninterrupted
+            // photo flow with no copywriting pauses.
+            //
+            // The sections are still defined in /config/lookbook.config.ts
+            // — they're just not rendered. To bring them back, replace
+            // `return null` here with the previous TextBreakBand JSX:
+            //
+            //   return <TextBreakBand key={i} copy={section.copy}
+            //                         align={section.align} />;
+            //
+            // The TextBreakBand component itself is also still in the
+            // codebase (components/sections/lookbook/TextBreakBand.tsx).
+            return null;
           default: {
             const _exhaustive: never = section;
             void _exhaustive;
