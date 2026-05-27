@@ -99,11 +99,133 @@ function flattenImages(sections: LookbookSection[]): FlattenedImages {
 }
 
 // ──────────────────────────────────────────────────────────────────────
+// Masonry grouping — merge consecutive masonry sections into one grid
+// ──────────────────────────────────────────────────────────────────────
+
+interface MasonryGroupInfo {
+  /**
+   * For each section index in lookbookSections, what the renderer
+   * should do with that section relative to masonry grouping:
+   *
+   *   'start'    — first masonry in a group; render the merged
+   *                <MasonryGrid> here (with items from this section
+   *                AND all consecutive masonry siblings absorbed).
+   *   'absorbed' — masonry section whose items were rolled into an
+   *                earlier 'start' section; render nothing.
+   *   'other'    — not a masonry section; render normally (covers,
+   *                detail stacks, etc.). Note: text-break sections
+   *                are tagged 'other' too (they still don't render
+   *                in the switch, just for unrelated reasons).
+   */
+  kind: 'start' | 'absorbed' | 'other';
+  /**
+   * Only set when kind === 'start'. The merged items array — flat
+   * sequence of every masonry item from this section + consecutive
+   * masonry siblings (text-breaks skipped). Item order matches
+   * config order. The `desktopColumns` setting comes from the FIRST
+   * section in the run (subsequent settings are ignored — usually
+   * they're all the same anyway).
+   */
+  mergedItems?: Array<{
+    sectionIndex: number;
+    itemIndex: number;
+    image: LookbookImage;
+    aspect: 'tall' | 'medium' | 'short' | 'square';
+  }>;
+  desktopColumns?: 2 | 3 | 4;
+}
+
+/**
+ * Walk the sections array and produce a per-index grouping plan.
+ *
+ * Why merge: each <MasonryGrid> independently balances its columns.
+ * Three masonry sections back-to-back produces three separate
+ * balancing runs, which means columns inside each section don't
+ * align with adjacent sections — you get a visible "stair step"
+ * seam where short columns from section A leave dead air below
+ * before section B's row starts.
+ *
+ * Merging into one grid means the algorithm balances ALL items
+ * across the three columns top-to-bottom-of-page — no seams,
+ * no internal dead air.
+ *
+ * "Consecutive" allows text-break sections in between, because
+ * those are hidden in the UI anyway (per Nov 2026 client request).
+ * Any image-rendering section between two masonry sections (cover,
+ * triptych, etc.) would break the group — which is the right
+ * behavior; you don't want them merging across visual interruptions.
+ */
+function computeMasonryGroups(sections: LookbookSection[]): MasonryGroupInfo[] {
+  const result: MasonryGroupInfo[] = sections.map(() => ({ kind: 'other' }));
+
+  let i = 0;
+  while (i < sections.length) {
+    if (sections[i]!.type !== 'masonry') {
+      i++;
+      continue;
+    }
+
+    // Found a masonry section. Walk forward, absorbing subsequent
+    // masonry sections (allowing text-break separators) until we
+    // hit something else or run out of sections.
+    const startIndex = i;
+    const merged: NonNullable<MasonryGroupInfo['mergedItems']> = [];
+    const firstSection = sections[startIndex]!;
+    // TS narrowing — the `if` above guarantees this is 'masonry'.
+    if (firstSection.type !== 'masonry') {
+      i++;
+      continue;
+    }
+    const desktopColumns = firstSection.desktopColumns ?? 3;
+
+    let j = startIndex;
+    while (j < sections.length) {
+      const s = sections[j]!;
+      if (s.type === 'masonry') {
+        s.items.forEach((it, k) => {
+          merged.push({
+            sectionIndex: j,
+            itemIndex: k,
+            image: it.image,
+            aspect: it.aspect ?? 'medium',
+          });
+        });
+        if (j !== startIndex) {
+          result[j] = { kind: 'absorbed' };
+        }
+        j++;
+      } else if (s.type === 'text-break') {
+        // Text-break doesn't break the group (it's hidden in the UI
+        // per client request). Mark it 'other' (default) so the
+        // switch still falls into the null-returning text-break case.
+        j++;
+      } else {
+        // Any other section type ends the group.
+        break;
+      }
+    }
+
+    result[startIndex] = {
+      kind: 'start',
+      mergedItems: merged,
+      desktopColumns,
+    };
+    i = j;
+  }
+
+  return result;
+}
+
+// ──────────────────────────────────────────────────────────────────────
 // Component
 // ──────────────────────────────────────────────────────────────────────
 
 export function LookbookClient() {
   const { all, offsets } = useMemo(() => flattenImages(lookbookSections), []);
+  const groups = useMemo(
+    () => computeMasonryGroups(lookbookSections),
+    []
+  );
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [lightboxOrigin, setLightboxOrigin] = useState<DOMRect | null>(null);
@@ -189,17 +311,40 @@ export function LookbookClient() {
               />
             );
           case 'masonry': {
-            // Build the per-item data the grid needs. Each item gets
-            // the global lightbox index = section's offset + position
-            // within the section. The grid passes that index back up
-            // when a card is clicked.
-            const baseOffset = offsets[i] ?? 0;
-            const masonryItems: MasonryItem[] = section.items.map((it, k) => ({
-              id: `${i}-${k}-${it.image.src}`,
-              image: it.image,
-              aspect: it.aspect ?? 'medium',
-              globalIndex: baseOffset + k,
-            }));
+            // If this masonry section was absorbed into an earlier
+            // group, render nothing — its items are already showing
+            // in the start-of-group's merged <MasonryGrid>.
+            const group = groups[i];
+            if (!group || group.kind === 'absorbed') {
+              return null;
+            }
+            // If this section is the START of a group, the items here
+            // are the merged set from this section + every consecutive
+            // masonry sibling. Click handler uses each item's
+            // recorded sectionIndex + itemIndex to compute its global
+            // lightbox index from the precomputed offsets table.
+            const items =
+              group.kind === 'start' && group.mergedItems
+                ? group.mergedItems
+                : section.items.map((it, k) => ({
+                    sectionIndex: i,
+                    itemIndex: k,
+                    image: it.image,
+                    aspect: it.aspect ?? ('medium' as const),
+                  }));
+            const desktopColumns =
+              group.kind === 'start' && group.desktopColumns
+                ? group.desktopColumns
+                : section.desktopColumns ?? 3;
+            const masonryItems: MasonryItem[] = items.map((it) => {
+              const baseOffset = offsets[it.sectionIndex] ?? 0;
+              return {
+                id: `${it.sectionIndex}-${it.itemIndex}-${it.image.src}`,
+                image: it.image,
+                aspect: it.aspect,
+                globalIndex: baseOffset + it.itemIndex,
+              };
+            });
             return (
               <section
                 key={i}
@@ -214,7 +359,7 @@ export function LookbookClient() {
                     setLightboxOrigin(rect);
                     setLightboxIndex(globalIndex);
                   }}
-                  desktopColumns={section.desktopColumns ?? 3}
+                  desktopColumns={desktopColumns}
                 />
               </section>
             );
