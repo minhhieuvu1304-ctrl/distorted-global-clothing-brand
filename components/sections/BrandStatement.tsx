@@ -28,7 +28,12 @@ export function BrandStatement() {
   return (
     <section
       aria-label="Brand statement"
-      className="flex min-h-[80vh] items-center bg-ink"
+      // min-h reduced from 80vh → 60vh per design review (Nov 2026).
+      // 80vh dominated the scroll and created too much air around
+      // adjacent sections (especially the gap into Early Access).
+      // 60vh still gives the line editorial breathing room without
+      // forcing the visitor to scroll past empty space.
+      className="flex min-h-[60vh] items-center bg-ink"
     >
       <div className="mx-auto w-full max-w-[1680px] px-6 py-20 md:px-12 md:py-32 lg:px-16">
         <FadeIn>
@@ -37,8 +42,14 @@ export function BrandStatement() {
             more editorial than dead-centered, matches reference brands
             (Fear of God, A-COLD-WALL*) per spec §1. Mobile drops the
             indent so the line breathes within tighter gutters.
+
+            Width: previously max-w-[80%], which forced "An experience
+            far beyond fabrics." to wrap onto a second line at desktop
+            (font-size 56-64px × 33-char line ≈ 1200px, exceeded the
+            container at typical viewports). Widened to 95% so the line
+            fits naturally. Left indent preserved for editorial feel.
           */}
-          <p className="font-serif text-paper md:max-w-[80%] md:pl-[8%] lg:pl-[12%]">
+          <p className="font-serif text-paper md:max-w-[90%] md:pl-[6%] lg:max-w-[95%] lg:pl-[10%]">
             <span className="block text-[36px] leading-[1.15] md:text-[56px] md:leading-[1.1] lg:text-[64px]">
               {copy}
             </span>

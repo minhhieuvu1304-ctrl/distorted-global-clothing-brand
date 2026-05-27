@@ -23,7 +23,11 @@ export function EarlyAccess() {
   return (
     <section
       aria-label="Early access"
-      className="flex min-h-[80vh] items-center bg-ink"
+      // min-h reduced from 80vh → 60vh per design review (Nov 2026).
+      // Aligned with BrandStatement's same reduction — tightens the
+      // overall homepage rhythm so the visitor isn't scrolling past
+      // empty space between conversion moments.
+      className="flex min-h-[60vh] items-center bg-ink"
     >
       <div className="mx-auto w-full max-w-[480px] px-6 py-20 md:py-32">
         <FadeIn>
