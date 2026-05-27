@@ -68,7 +68,7 @@ export const lookbookSections: LookbookSection[] = [
   // ══════════════════════════════════════════════════════════════════
   {
     type: 'cover',
-    image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/aw26.jpg?v=1779879256', 'description'),
+    image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/aw26.jpg?v=1779879256', 'Campaign cover'),
     title: 'AW26',
     titlePosition: 'bottom-left',
   },
@@ -97,31 +97,29 @@ export const lookbookSections: LookbookSection[] = [
       // and paste the URL from Shopify Admin → Content → Files.
       // ─────────────────────────────────────────────────────────────
       {
-        image: shopifyImage(
-          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/dscn5716.jpg?v=1779796639',
-          'Pilot image — Shopify CDN pipeline test'
+        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/distorted-graffiti-group-garage.jpg?v=1779879257', 'lookbook collection')
         ),
         aspect: 'tall',
       },
       {
-        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-beach.heic?v=1779800477', 'Black hoodie with the beach'),
+        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-street-lamps.jpg?v=1779879257', 'lookbook collection'),
         aspect: 'medium',
       },
-      { image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-black-rooftop.jpg?v=1779800277', 'Black hoodie om rooftop'),
+      { image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/xray-hoodie-logo-garage.jpg?v=1779879257', 'Black hoodie om rooftop'),
       {
-        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-group-black.jpg?v=1779800251', 'Hoodie showcase'),
+         image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/sewing-machine-film-setup.jpg?v=1779879257', 'lookbook collection'),
         aspect: 'short',
       },
       {
-        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_5261.jpg?v=1779801621', 'Fashion show'),
+        image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-outfit-stairwell-lying.jpg?v=1779879257', 'Fashion show'),
         aspect: 'tall',
       },
       {
-       image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_1858.heic?v=1779801623', 'Belt showcase'),
+       image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-event-sunglasses.jpg?v=1779879256', 'Belt showcase'),
         aspect: 'medium',
       },
-      {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_7832.heic?v=1779801623', 'Cap showcase'), aspect: 'square' },
-      {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/Distorted_standing_logo_1_X-Ray.jpg?v=1779801621', 'Standing logo'), aspect: 'tall' },
+      {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/graffiti-wall-action-shot.jpg?v=1779879257', 'Graffiti'), aspect: 'square' },
+      {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/hoodie-sunglasses-white-wall.jpg?v=1779879257', 'Standing logo'), aspect: 'tall' },
       {
         image: ph('look-07', 'Look 07 — bust crop, hood down'),
         aspect: 'medium',
