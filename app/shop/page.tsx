@@ -43,7 +43,7 @@ export default async function ShopPage() {
         className="flex min-h-[30vh] items-end bg-ink pt-24 md:pt-32"
       >
         <div className="mx-auto w-full max-w-[1440px] px-4 pb-12 md:px-6 md:pb-16">
-          <h1 className="font-display text-[40px] uppercase leading-[1.05] tracking-[-0.01em] text-paper md:text-[64px] lg:text-[72px]">
+          <h1 className="font-display text-[40px] leading-[1.05] tracking-[-0.01em] text-paper md:text-[64px] lg:text-[72px]">
             {siteConfig.shop.headline}
           </h1>
         </div>
