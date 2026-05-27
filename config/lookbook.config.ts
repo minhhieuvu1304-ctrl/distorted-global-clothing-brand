@@ -47,20 +47,13 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
-import type { LookbookSection, LookbookImage } from '@/lib/types';
+import type { LookbookSection } from '@/lib/types';
 import { shopifyImage } from '@/lib/shopify-images';
 
-// Placeholder image factory — generates picsum URLs from a seed so
-// each image is stable across reloads. At launch, replace these
-// `src`/`srcHighRes` URLs with real Cloudflare-Images URLs.
-function ph(seed: string, alt: string): LookbookImage {
-  const base = `https://picsum.photos/seed/${seed}`;
-  return {
-    src: `${base}/1200/1500`,
-    srcHighRes: `${base}/2400/3000`,
-    alt,
-  };
-}
+// All lookbook entries now use real Shopify-hosted imagery via
+// shopifyImage(). If you ever need a placeholder while waiting for
+// final photography, see the picsum-seeded helper pattern in
+// git history (look for `function ph(...)` in earlier commits).
 
 export const lookbookSections: LookbookSection[] = [
   // ══════════════════════════════════════════════════════════════════
@@ -297,7 +290,14 @@ export const lookbookSections: LookbookSection[] = [
         ),
         aspect: 'tall',
       },
-      { image: ph('look-17', 'Look 17 — quiet portrait'), aspect: 'medium' },
+      {
+        // Medium slot flexed to short — landscape balcony composition.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_4249.jpg?v=1779886399',
+          'Balcony portrait — lace top with leopard belt'
+        ),
+        aspect: 'short',
+      },
     ],
   },
 
@@ -318,8 +318,12 @@ export const lookbookSections: LookbookSection[] = [
     desktopColumns: 3,
     items: [
       {
-        image: ph('look-18', 'Look 18 — full crew, exterior'),
-        aspect: 'medium',
+        // Medium slot flexed to short — companion balcony shot.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/IMG_4251.jpg?v=1779886398',
+          'Balcony portrait — black hoodie with red belt'
+        ),
+        aspect: 'short',
       },
       {
         image: shopifyImage(
@@ -357,8 +361,13 @@ export const lookbookSections: LookbookSection[] = [
         aspect: 'short',
       },
       {
-        image: ph('look-22', 'Look 22 — group, three subjects'),
-        aspect: 'medium',
+        // Medium slot flexed to tall — vertical trio composition with
+        // Distorted graffiti backdrop.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/dscn5793.jpg?v=1779886400',
+          'Three subjects with Distorted graffiti backdrop'
+        ),
+        aspect: 'tall',
       },
       {
         image: shopifyImage(
@@ -375,8 +384,12 @@ export const lookbookSections: LookbookSection[] = [
         aspect: 'tall',
       },
       {
-        image: ph('look-24', 'Look 24 — closing motion shot'),
-        aspect: 'medium',
+        // Medium slot flexed to short — landscape stairway composition.
+        image: shopifyImage(
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/dscn5756.jpg?v=1779886399',
+          'Stairway view — Distorted insignia hoodies'
+        ),
+        aspect: 'short',
       },
       {
         // Screenshot PNG — flagged for quality review.
