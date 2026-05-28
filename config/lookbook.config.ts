@@ -285,8 +285,8 @@ export const lookbookSections: LookbookSection[] = [
       },
       {
         image: shopifyImage(
-          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-lamp-columns.jpg?v=1779880429',
-          'Black hoodie lamp columns'
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/dscn5768.jpg?v=1779937267',
+          'Black hoodie stairs'
         ),
         aspect: 'tall',
       },
