@@ -1,154 +1,226 @@
-// lib/types.ts
-// Shared types describing the shape of Shopify data.
-// Mock data and real Storefront API data both conform to these,
-// so the rest of the app never needs to know which one it's using.
+/**
+ * Shopify Storefront API types — distorted.global.
+ *
+ * Two layers:
+ *
+ *   1. Raw GraphQL response shapes (`Shopify*` prefix). These mirror
+ *      the GraphQL schema 1:1, including connection/edge wrappers and
+ *      Money objects. Used only by the fetch + normalize layer in
+ *      products.ts.
+ *
+ *   2. App-shaped types (no prefix). Flat, readable, and stable —
+ *      what the rest of the app actually consumes. Connections are
+ *      flattened, Money is reduced to numeric cents, and
+ *      sold-out/category derivations are baked in at fetch time.
+ *
+ * Why the split: the Storefront GraphQL shape is not pleasant for UI
+ * code (`product.images.edges[0].node.url`), and decoupling now means
+ * a future schema change only touches normalization, not components.
+ *
+ * Spec reference: §5 (Shop Page) for the fields the app actually
+ * needs at the card / PDP level.
+ */
 
-export interface Money {
-  amount: string;
-  currencyCode: string;
-}
+// ──────────────────────────────────────────────────────────────────────
+// APP-SHAPED TYPES (the surface most code touches)
+// ──────────────────────────────────────────────────────────────────────
+
+/**
+ * Locked category set per spec §5 filter bar:
+ *   ALL · HOODIES · SHIRTS · HATS · BELTS
+ *
+ * The 'all' pseudo-category is handled at the page level (no filter
+ * applied); this type covers the real underlying categories.
+ *
+ * These match the slugs in `siteConfig.shop.categories` and are
+ * expected to appear as Shopify product tags (e.g. `category:hoodie`)
+ * or as the `productType` field. See `categoryFromShopifyTags()` in
+ * products.ts for the resolution logic.
+ */
+export type ProductCategory = 'hoodie' | 'shirt' | 'hat' | 'belt';
 
 export interface ProductImage {
-  url: string;
-  altText: string | null;
-  width?: number;
-  height?: number;
+  /** Cloudflare-CDN-served Shopify URL. */
+  src: string;
+  /** Alt text — auto-pulled from Shopify per spec §13 a11y. */
+  alt: string;
+  /** Intrinsic width in px — used by next/image. */
+  width: number;
+  /** Intrinsic height in px. */
+  height: number;
 }
 
 export interface ProductVariant {
-  id: string; // Shopify GID, e.g. "gid://shopify/ProductVariant/123"
+  /** Storefront API global ID, e.g. `gid://shopify/ProductVariant/123`. */
+  id: string;
+  /** Variant title — typically the size, e.g. "M". */
   title: string;
+  /** Parsed size — narrowed when the variant title is a known size. */
+  size: 'XS' | 'S' | 'M' | 'L' | 'XL' | string;
   availableForSale: boolean;
-  price?: Money;
-  selectedOptions?: { name: string; value: string }[];
+  /** Price in USD cents. We normalize Money → integer cents at fetch. */
+  priceCents: number;
+  /**
+   * The Shopify option name driving the selector for this variant —
+   * "Size", "Color", "Material", etc. Used by the PDP to label the
+   * selector dynamically ("Size" for hoodies, "Color" for caps/belts).
+   * Falls back to "Size" when not present.
+   */
+  optionName: string;
+  /**
+   * Variant-specific image, if assigned in Shopify admin. The PDP
+   * gallery scrolls to this image when the variant is selected.
+   * `null` when no variant image is configured (Shopify will fall
+   * back to the first product image visually, but we use null here
+   * to mean "no scroll target").
+   */
+  image: ProductImage | null;
 }
 
 export interface Product {
+  /** Storefront global ID. */
+  id: string;
+  /** URL slug, e.g. "hoodie-no-03". Used in `/shop?product=...`. */
+  handle: string;
+  /** Display name — Bodoni sentence case per spec §5. */
+  title: string;
+  /** Short description — Inter 14px in PDP. */
+  description: string;
+  /** Item number used in PDP header (Inter caption). Derived from
+   *  Shopify SKU or a `item-no:NN` tag if present. */
+  itemNumber: string;
+  /** Resolved category — `null` when no recognized tag/type matches.
+   *  Products without a category are still listed under "All". */
+  category: ProductCategory | null;
+  /** Min price in USD cents, formatted via `formatPrice()` for display. */
+  priceCents: number;
+  /** All available product images (gallery). First is the primary card image. */
+  images: ProductImage[];
+  /** Variants — typically one per size. */
+  variants: ProductVariant[];
+  /** Computed at fetch time — true if every variant is unavailable
+   *  OR product carries the `manual-soldout` tag (spec §5). */
+  isSoldOut: boolean;
+  /** Raw Shopify tags — kept for category resolution and downstream filters. */
+  tags: string[];
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// CART
+// ──────────────────────────────────────────────────────────────────────
+
+export interface CartLineItem {
+  /** Cart line ID (different from variant ID). Used for update/remove ops. */
+  id: string;
+  /** Reference to the underlying variant. */
+  variantId: string;
+  /** Product handle for navigation links. */
+  productHandle: string;
+  /** Display name — Bodoni in drawer. */
+  productTitle: string;
+  /** Variant title — typically the size. */
+  variantTitle: string;
+  /** Thumbnail image for drawer row. */
+  image: ProductImage | null;
+  quantity: number;
+  /** Per-line unit price in USD cents. */
+  unitPriceCents: number;
+  /** Line total in cents (unit × qty). */
+  lineTotalCents: number;
+}
+
+export interface Cart {
+  /** Cart ID (persists in localStorage so cart survives reloads). */
+  id: string;
+  lines: CartLineItem[];
+  /** Sum of all line totals in cents. */
+  subtotalCents: number;
+  /** Total quantity across all lines — what the nav badge displays. */
+  totalQuantity: number;
+  /** Shopify-hosted checkout URL — used by the CHECKOUT button. */
+  checkoutUrl: string;
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// RAW SHOPIFY GraphQL RESPONSE SHAPES (internal — used only in normalization)
+// ──────────────────────────────────────────────────────────────────────
+
+interface ShopifyMoney {
+  amount: string; // decimal string, e.g. "420.00"
+  currencyCode: string; // "USD"
+}
+
+interface ShopifyImage {
+  url: string;
+  altText: string | null;
+  width: number;
+  height: number;
+}
+
+interface ShopifyConnection<T> {
+  edges: Array<{ node: T }>;
+}
+
+interface ShopifySelectedOption {
+  name: string;
+  value: string;
+}
+
+interface ShopifyProductVariant {
   id: string;
   title: string;
+  availableForSale: boolean;
+  price: ShopifyMoney;
+  selectedOptions: ShopifySelectedOption[];
+  sku: string | null;
+  /** Variant-specific image. Null when no variant image is configured. */
+  image: ShopifyImage | null;
+}
+
+export interface ShopifyProduct {
+  id: string;
   handle: string;
-  description: string;
-  descriptionHtml?: string;
-  priceRange: { minVariantPrice: Money };
-  images: { edges: { node: ProductImage }[] };
-  variants: { edges: { node: ProductVariant }[] };
-}
-
-// What a single line in the cart looks like.
-export interface CartItem {
-  variantId: string;
-  quantity: number;
-  // Display info copied in so the cart UI doesn't need to re-fetch.
-  productTitle: string;
-  variantTitle: string;
-  price: string;
-  currencyCode: string;
-  image: string;
-  handle: string;
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// LookbookSection — discriminated union per spec §6
-// ──────────────────────────────────────────────────────────────────────
-//
-// The lookbook page is driven entirely by an ordered array of these
-// sections in /config/lookbook.config.ts. Each section is a layout
-// primitive; the page walks the array and renders each in turn.
-//
-// To add a new layout: add a new variant to the LookbookSection union
-// plus a renderer in /app/lookbook/page.tsx (or LookbookClient).
-// TypeScript will fail any switch that misses a case.
-
-/**
- * A single image used anywhere in the lookbook.
- *
- * `src`        in-page source (~1400px wide is the sweet spot)
- * `srcHighRes` larger version used by the lightbox (~2400px)
- * `alt`        accessibility text — never null
- * `focalPoint` optional 0-100 x/y percentages for object-position when
- *              cropping. Defaults to centered.
- */
-export interface LookbookImage {
-  src: string;
-  srcHighRes: string;
-  alt: string;
-  focalPoint?: { x: number; y: number };
-}
-
-export type LookbookSection =
-  | CoverSection
-  | FullBleedSingleSection
-  | AsymmetricPairSection
-  | TriptychSection
-  | DetailStackSection
-  | TextBreakSection
-  | MasonrySection;
-
-/** First section of the lookbook. Full-bleed image with overlay title. */
-export interface CoverSection {
-  type: 'cover';
-  image: LookbookImage;
   title: string;
-  titlePosition?: 'bottom-left' | 'center-bottom';
+  description: string;
+  productType: string;
+  tags: string[];
+  priceRange: {
+    minVariantPrice: ShopifyMoney;
+  };
+  images: ShopifyConnection<ShopifyImage>;
+  variants: ShopifyConnection<ShopifyProductVariant>;
 }
 
-/** A single edge-to-edge image. Default height 100vh; override via `height`. */
-export interface FullBleedSingleSection {
-  type: 'full-bleed-single';
-  image: LookbookImage;
-  height?: string;
+export interface ShopifyCartLine {
+  id: string;
+  quantity: number;
+  cost: {
+    totalAmount: ShopifyMoney;
+    amountPerQuantity: ShopifyMoney;
+  };
+  merchandise: {
+    id: string;
+    title: string;
+    image: ShopifyImage | null;
+    product: {
+      handle: string;
+      title: string;
+    };
+  };
 }
 
-/** Two images side-by-side with intentional asymmetry. */
-export interface AsymmetricPairSection {
-  type: 'asymmetric-pair';
-  leftImage: LookbookImage;
-  rightImage: LookbookImage;
-  /** Width % of left image, 1-99. Default 70. */
-  weight?: number;
-  /** Vertical px offset of the smaller image. Default 100. */
-  offset?: number;
-  /** Which side is larger. Default 'left'. */
-  larger?: 'left' | 'right';
+export interface ShopifyCart {
+  id: string;
+  checkoutUrl: string;
+  totalQuantity: number;
+  cost: {
+    subtotalAmount: ShopifyMoney;
+  };
+  lines: ShopifyConnection<ShopifyCartLine>;
 }
 
-/** Three images in a row. Equal thirds by default. */
-export interface TriptychSection {
-  type: 'triptych';
-  images: [LookbookImage, LookbookImage, LookbookImage];
-  /** Optional column weights, e.g. [30, 40, 30]. */
-  weights?: [number, number, number];
-}
-
-/** A vertical stack of smaller detail-shot images. */
-export interface DetailStackSection {
-  type: 'detail-stack';
-  images: LookbookImage[];
-  align?: 'left' | 'center' | 'right';
-  /** Max-width in px. Default 600. */
-  maxWidth?: number;
-}
-
-/** A line of editorial Bodoni copy on a dark backdrop — used as a pause. */
-export interface TextBreakSection {
-  type: 'text-break';
-  copy: string;
-  align?: 'left' | 'center';
-}
-
-/** Aspect ratio bucket for masonry cards. Drives card height + balancing. */
-export type MasonryAspect = 'tall' | 'medium' | 'short' | 'square';
-
-export interface MasonryCardItem {
-  image: LookbookImage;
-  /** Default 'medium' if omitted. */
-  aspect?: MasonryAspect;
-}
-
-/** Pinterest-style dense grid. 3 columns desktop / 2 mobile by default. */
-export interface MasonrySection {
-  type: 'masonry';
-  items: MasonryCardItem[];
-  /** Max columns on desktop. Default 3. */
-  desktopColumns?: 2 | 3 | 4;
+// User-error shape returned by Storefront mutations (cartCreate, etc.).
+export interface ShopifyUserError {
+  field: string[] | null;
+  message: string;
 }
