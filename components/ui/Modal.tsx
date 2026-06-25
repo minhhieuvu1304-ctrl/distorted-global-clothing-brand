@@ -57,14 +57,20 @@ export function Modal({
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  // Body scroll lock while open. Restores previous overflow on close
-  // (so we don't trample some other modal's lock).
+  // Body scroll lock while open. Locks BOTH the html (documentElement)
+  // and body elements — in some browser/CSS setups the scroll container
+  // is html rather than body, so locking only one isn't sufficient.
+  // Restores the previous values on close so we don't trample another
+  // modal's lock if dialogs are ever nested.
   useEffect(() => {
     if (!open) return;
-    const previous = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = previous;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
     };
   }, [open]);
 
@@ -111,7 +117,12 @@ export function Modal({
           maxWidth,
           // Mobile: full-height sheet from bottom; desktop: centered card
           'h-full md:h-auto md:max-h-[90vh] md:rounded-sm',
-          'overflow-y-auto'
+          'overflow-y-auto',
+          // Prevent wheel/touch scroll from escaping to the page when the
+          // modal hits its scroll limit (top or bottom). Critical for the
+          // desktop card variant — without this, a wheel at scroll-top
+          // can bubble to the page even with body lock.
+          '[overscroll-behavior:contain]'
         )}
         style={
           reduced
