@@ -135,6 +135,41 @@ function PdpBody({ product, related, onOpenProduct }: PdpBodyProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [lightboxOrigin, setLightboxOrigin] = useState<DOMRect | null>(null);
 
+  // Selected variant lifted up here (from PdpInfo) so the gallery can
+  // react to color/size selection — when a variant with an associated
+  // image is selected, we scroll the gallery to that image.
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+    null
+  );
+
+  // Reset selection if product changes (modal navigated to another item).
+  useEffect(() => {
+    setSelectedVariantId(null);
+  }, [product.id]);
+
+  // Refs to each gallery image button — populated by the .map below.
+  // Used by the variant-selection scroll effect.
+  const galleryRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  // When a variant with an assigned image is selected, scroll the
+  // gallery so that variant's image is at the top of the modal viewport.
+  // Match variant.image to gallery images by src — if there's no match
+  // (variant has no image, or its image isn't in the product gallery),
+  // we leave scroll position alone rather than guessing.
+  useEffect(() => {
+    if (!selectedVariantId) return;
+    const variant = product.variants.find((v) => v.id === selectedVariantId);
+    if (!variant?.image) return;
+    const matchIndex = product.images.findIndex(
+      (img) => img.src === variant.image?.src
+    );
+    if (matchIndex < 0) return;
+    const target = galleryRefs.current[matchIndex];
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [selectedVariantId, product.variants, product.images]);
+
   const lightboxImages: LightboxImage[] = useMemo(
     () =>
       product.images.map((img) => ({
@@ -194,6 +229,9 @@ function PdpBody({ product, related, onOpenProduct }: PdpBodyProps) {
             <button
               type="button"
               key={`${img.src}-${i}`}
+              ref={(el) => {
+                galleryRefs.current[i] = el;
+              }}
               onClick={(e) => openLightbox(i, e)}
               aria-label={`Zoom ${img.alt}`}
               className="relative block aspect-[3/2] w-full overflow-hidden bg-smoke"
@@ -212,7 +250,11 @@ function PdpBody({ product, related, onOpenProduct }: PdpBodyProps) {
 
         {/* RIGHT: Product info — sticky on desktop */}
         <div className="md:sticky md:top-12 md:self-start">
-          <PdpInfo product={product} />
+          <PdpInfo
+            product={product}
+            selectedVariantId={selectedVariantId}
+            onSelectVariant={setSelectedVariantId}
+          />
         </div>
       </div>
 
@@ -243,21 +285,26 @@ function PdpBody({ product, related, onOpenProduct }: PdpBodyProps) {
 // PDP info column — header / size / add-to-cart / accordions
 // ──────────────────────────────────────────────────────────────────────
 
-function PdpInfo({ product }: { product: Product }) {
+function PdpInfo({
+  product,
+  selectedVariantId,
+  onSelectVariant,
+}: {
+  product: Product;
+  selectedVariantId: string | null;
+  onSelectVariant: (id: string | null) => void;
+}) {
   const { addToCart } = useCart();
 
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
-    null
-  );
   const [sizeError, setSizeError] = useState(false);
   const [adding, setAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
 
   const allSoldOut = product.isSoldOut;
 
-  // Reset selection if product changes (modal navigated to another item)
+  // Reset error/justAdded state if product changes. Variant selection
+  // is reset by the parent (PdpBody) since it owns that state now.
   useEffect(() => {
-    setSelectedVariantId(null);
     setSizeError(false);
     setJustAdded(false);
   }, [product.id]);
@@ -298,13 +345,13 @@ function PdpInfo({ product }: { product: Product }) {
         {formatPrice(product.priceCents)}
       </p>
 
-      {/* Size selector — only when multiple variants exist */}
+      {/* Variant selector (Size for hoodies/shirts, Color for caps/belts) */}
       {product.variants.length > 0 && (
         <SizeSelector
           variants={product.variants}
           selectedId={selectedVariantId}
           onSelect={(id) => {
-            setSelectedVariantId(id);
+            onSelectVariant(id);
             setSizeError(false);
           }}
           error={sizeError}
@@ -386,11 +433,16 @@ function SizeSelector({
   onSelect,
   error,
 }: SizeSelectorProps) {
+  // Use the option name from Shopify ("Size", "Color", "Material", ...).
+  // All variants on a single-option product share the same option name,
+  // so we read from the first variant. Defaults to "Size" if missing.
+  const legendLabel = variants[0]?.optionName ?? 'Size';
+
   return (
     <div>
       <fieldset>
         <legend className="mb-3 font-sans text-[11px] uppercase tracking-[0.1em] text-mist">
-          Size
+          {legendLabel}
         </legend>
         <div role="radiogroup" className="flex flex-wrap gap-2">
           {variants.map((v) => {
