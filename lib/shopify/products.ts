@@ -152,15 +152,32 @@ function normalizeProduct(raw: ShopifyProduct): Product {
   }));
 
   const variants: ProductVariant[] = raw.variants.edges.map((e) => {
+    // Look for known option names — Size first (since it's most common
+    // for hoodies/shirts), then Color (caps, belts), then fall back to
+    // the first option, then the variant title.
     const sizeOption = e.node.selectedOptions.find(
       (o) => o.name.toLowerCase() === 'size'
     );
+    const colorOption = e.node.selectedOptions.find(
+      (o) => o.name.toLowerCase() === 'color'
+    );
+    const primaryOption = sizeOption ?? colorOption ?? e.node.selectedOptions[0];
+
     return {
       id: e.node.id,
       title: e.node.title,
-      size: sizeOption?.value ?? e.node.title,
+      size: primaryOption?.value ?? e.node.title,
+      optionName: primaryOption?.name ?? 'Size',
       availableForSale: e.node.availableForSale,
       priceCents: parseMoneyCents(e.node.price.amount),
+      image: e.node.image
+        ? {
+            src: e.node.image.url,
+            alt: e.node.image.altText ?? raw.title,
+            width: e.node.image.width,
+            height: e.node.image.height,
+          }
+        : null,
     };
   });
 

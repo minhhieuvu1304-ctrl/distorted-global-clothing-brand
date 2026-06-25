@@ -60,6 +60,21 @@ export interface ProductVariant {
   availableForSale: boolean;
   /** Price in USD cents. We normalize Money → integer cents at fetch. */
   priceCents: number;
+  /**
+   * The Shopify option name driving the selector for this variant —
+   * "Size", "Color", "Material", etc. Used by the PDP to label the
+   * selector dynamically ("Size" for hoodies, "Color" for caps/belts).
+   * Falls back to "Size" when not present.
+   */
+  optionName: string;
+  /**
+   * Variant-specific image, if assigned in Shopify admin. The PDP
+   * gallery scrolls to this image when the variant is selected.
+   * `null` when no variant image is configured (Shopify will fall
+   * back to the first product image visually, but we use null here
+   * to mean "no scroll target").
+   */
+  image: ProductImage | null;
 }
 
 export interface Product {
@@ -158,6 +173,8 @@ interface ShopifyProductVariant {
   price: ShopifyMoney;
   selectedOptions: ShopifySelectedOption[];
   sku: string | null;
+  /** Variant-specific image. Null when no variant image is configured. */
+  image: ShopifyImage | null;
 }
 
 export interface ShopifyProduct {

@@ -59,6 +59,16 @@ const PRODUCT_FRAGMENT = /* GraphQL */ `
             amount
             currencyCode
           }
+          # Variant-specific image. Set in Shopify admin per variant —
+          # used by the PDP gallery to scroll to the matching photo when
+          # a color/option is selected. Null when no variant image is
+          # configured (Shopify falls back to the first product image).
+          image {
+            url
+            altText
+            width
+            height
+          }
         }
       }
     }
