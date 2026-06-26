@@ -57,20 +57,49 @@ export function Modal({
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  // Body scroll lock while open. Locks BOTH the html (documentElement)
-  // and body elements — in some browser/CSS setups the scroll container
-  // is html rather than body, so locking only one isn't sufficient.
-  // Restores the previous values on close so we don't trample another
-  // modal's lock if dialogs are ever nested.
+  // Body scroll lock while open.
+  //
+  // We use position:fixed on the body (with negative-top to preserve
+  // scroll position) instead of just overflow:hidden. The latter is
+  // the textbook approach but doesn't actually lock scrolling in some
+  // Next.js / browser combinations — particularly when the html
+  // element rather than body is the document's scroll container.
+  // position:fixed is the bulletproof technique used by react-modal
+  // and other industrial-strength dialog libraries.
+  //
+  // We still apply overflow:hidden as belt-and-suspenders so trackpad
+  // gestures (which can sometimes target html directly) are caught too.
+  // We restore everything precisely on close so nested modals and
+  // edge cases (e.g. modal closed via route change) don't trample
+  // each other.
   useEffect(() => {
     if (!open) return;
+    const scrollY = window.scrollY;
+    const prevBody = {
+      position: document.body.style.position,
+      top: document.body.style.top,
+      left: document.body.style.left,
+      right: document.body.style.right,
+      width: document.body.style.width,
+      overflow: document.body.style.overflow,
+    };
     const prevHtmlOverflow = document.documentElement.style.overflow;
-    const prevBodyOverflow = document.body.style.overflow;
-    document.documentElement.style.overflow = 'hidden';
+
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
     return () => {
+      Object.assign(document.body.style, prevBody);
       document.documentElement.style.overflow = prevHtmlOverflow;
-      document.body.style.overflow = prevBodyOverflow;
+      // Restore scroll position; without this the page jumps to top
+      // when the modal closes because position:fixed removes the body
+      // from normal scroll flow.
+      window.scrollTo(0, scrollY);
     };
   }, [open]);
 
