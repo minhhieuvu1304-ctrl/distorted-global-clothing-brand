@@ -35,7 +35,7 @@ export function InstagramFeed() {
   return (
     <section
       aria-label="Instagram feed"
-      className="bg-ink py-section-mobile md:py-section-desktop"
+      className="bg-ink pt-section-mobile md:pt-section-desktop pb-12 md:pb-16"
     >
       <div className="mx-auto max-w-[1440px] px-4 md:px-12 lg:px-16">
         {/* Section header */}
