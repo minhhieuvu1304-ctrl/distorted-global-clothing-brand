@@ -113,7 +113,8 @@ export const lookbookSections: LookbookSection[] = [
         aspect: 'tall',
       },
       {
-       image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-event-sunglasses.jpg?v=1779879256', 'Belt showcase'),
+       image: shopifyImage( 'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/low-angle-hoodie-red-belt.jpg?v=1779880430',
+          'Low angle hoodie red belt'),
         aspect: 'medium',
       },
       {image: shopifyImage('https://cdn.shopify.com/s/files/1/0704/8826/0685/files/graffiti-wall-action-shot.jpg?v=1779879257', 'Graffiti'), aspect: 'square' },
@@ -334,8 +335,7 @@ export const lookbookSections: LookbookSection[] = [
       },
       {
         image: shopifyImage(
-          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/low-angle-hoodie-red-belt.jpg?v=1779880430',
-          'Low angle hoodie red belt'
+          'https://cdn.shopify.com/s/files/1/0704/8826/0685/files/black-hoodie-event-sunglasses.jpg?v=1779879256', 'Belt showcase'
         ),
         aspect: 'tall',
       },
