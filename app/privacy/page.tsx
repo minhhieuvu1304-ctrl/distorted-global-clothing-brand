@@ -108,10 +108,10 @@ export default function PrivacyPage() {
             <p>
               For privacy inquiries:{' '}
               <a
-                href="mailto:info@distorted.global"
+                href="mailto:distorted.global@gmail.com"
                 className="text-paper underline underline-offset-[3px] hover:opacity-80"
               >
-                info@distorted.global
+                distorted.global@gmail.com
               </a>
             </p>
           </Section>
