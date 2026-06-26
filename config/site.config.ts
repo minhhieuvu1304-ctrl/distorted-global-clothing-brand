@@ -169,9 +169,9 @@ export const siteConfig = {
   // ────────────────────────────────────────────────────────────────────
   earlyAccess: {
     /** Bodoni 56px desktop / 36px mobile, ALL CAPS per tone. */
-    headline: 'EARLY ACCESS',
+    headline: 'MEMBER ACCESS',
     /** Inter 14px, mist color. */
-    subline: 'First look at drops. Members only.',
+    subline: 'Exclusive discount. Members only.',
     /** Email input placeholder. */
     emailPlaceholder: 'Email',
     /** Phone input placeholder (only shown when smsCapture flag is on). */
@@ -205,14 +205,14 @@ export const siteConfig = {
      * The page header already says "EARLY ACCESS" so we don't duplicate
      * a headline here — only the sub-line.
      */
-    formSublabel: 'First look at drops. Members only.',
+    formSublabel: 'Exclusive discount. Members only.',
     /** Section label above the email — Inter caption. */
     inquiriesLabel: 'INQUIRIES',
     /**
      * The contact email. Bodoni 32-40px on /contact, triggers `mailto:`.
      * Owner can update at any time.
      */
-    email: 'info@distorted.global',
+    email: 'distorted.global@gmail.com',
     /**
      * Optional one-liner under the email — Inter 13px in --mist.
      * Set to '' to hide the line entirely.
@@ -391,20 +391,13 @@ export const siteConfig = {
     /** © year — auto-updates? No, manual. Bump each January. */
     copyrightYear: 2026,
     /** Brand name in copyright line. */
-    copyrightHolder: 'DISTORTED',
+    copyrightHolder: 'DISTORTED GLOBAL',
     columns: [
       {
         heading: 'SHOP',
         links: [
           { label: 'Collection', href: '/shop' },
           { label: 'Lookbook', href: '/lookbook' },
-        ],
-      },
-      {
-        heading: 'COMPANY',
-        links: [
-          { label: 'About', href: '/about' },
-          { label: 'Story', href: '/story' },
         ],
       },
       {
@@ -432,11 +425,8 @@ export const siteConfig = {
         ],
       },
     ] satisfies FooterColumn[],
-    /** Bottom-row legal links, right-aligned. */
-    legalLinks: [
-      { label: 'Privacy', href: '/privacy' },
-      { label: 'Terms', href: '/terms' },
-    ] satisfies FooterLink[],
+    /** Bottom-row legal links, right-aligned. Empty array hides the row. */
+    legalLinks: [] as FooterLink[],
   },
 
   // ────────────────────────────────────────────────────────────────────
