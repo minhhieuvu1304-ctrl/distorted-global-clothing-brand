@@ -37,7 +37,7 @@ export function Footer() {
         </div>
 
         {/* 4-column link grid */}
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-4 md:gap-8">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-8">
           {footer.columns.map((col) => (
             <div key={col.heading}>
               <h3 className="mb-6 font-sans text-caption uppercase text-mist">
@@ -61,24 +61,26 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Divider + bottom legal row */}
+        {/* Divider + bottom row. Legal links render only when configured. */}
         <div className="mt-20 border-t border-smoke pt-8 md:mt-24">
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <p className="font-sans text-[12px] uppercase tracking-[0.04em] text-steel">
               © {footer.copyrightYear} {footer.copyrightHolder}
             </p>
-            <ul className="flex gap-8">
-              {footer.legalLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="font-sans text-[12px] uppercase tracking-[0.04em] text-steel transition-colors duration-200 hover:text-paper"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {footer.legalLinks.length > 0 && (
+              <ul className="flex gap-8">
+                {footer.legalLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="font-sans text-[12px] uppercase tracking-[0.04em] text-steel transition-colors duration-200 hover:text-paper"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
