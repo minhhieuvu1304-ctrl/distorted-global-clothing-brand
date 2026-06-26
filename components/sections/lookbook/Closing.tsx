@@ -19,9 +19,9 @@ export function Closing() {
   return (
     <section
       aria-label="Lookbook closing"
-      className="flex min-h-[60vh] items-center bg-ink"
+      className="bg-ink"
     >
-      <div className="mx-auto w-full max-w-[1440px] px-6 py-20 md:px-12 md:py-24 lg:px-16">
+      <div className="mx-auto w-full max-w-[1440px] px-6 pb-20 pt-4 md:px-12 md:pb-24 md:pt-6 lg:px-16">
         <div className="flex flex-col gap-12">
           {credits && (
             <p className="font-sans text-[11px] uppercase tracking-[0.1em] text-steel">
