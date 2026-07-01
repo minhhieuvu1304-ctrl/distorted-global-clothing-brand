@@ -1,38 +1,30 @@
 import { NextResponse } from 'next/server';
-import { subscribeToList } from '@/lib/klaviyo';
+import { subscribeCustomer } from '@/lib/shopify/customers';
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit';
 
 /**
  * POST /api/klaviyo/subscribe
  *
- * Server-side endpoint that the <EarlyAccessForm /> component POSTs
- * to. Validates input, rate-limits per IP, calls Klaviyo via the
- * server-only client (private API key never crosses the wire to the
- * browser), and returns a friendly response shape the form maps to
- * UI states.
+ * Note: route path kept for backwards compatibility with the frontend
+ * form, but the backend now uses SHOPIFY (not Klaviyo). The name is
+ * vestigial and will be renamed in a future cleanup.
  *
- * Response shape:
+ * Server-side endpoint that <EarlyAccessForm /> POSTs to. Validates,
+ * rate-limits per IP, calls Shopify Admin API via the server-only
+ * customers helper (OAuth Client Secret never crosses the wire to
+ * the browser), and returns a friendly shape the form maps to UI states.
+ *
+ * Response shape (unchanged so the form doesn't need updating):
  *   200 { ok: true }
  *   400 { ok: false, error: 'invalid-email' | 'invalid-phone' | 'duplicate' | 'validation' }
  *   429 { ok: false, error: 'rate-limited' }
  *   503 { ok: false, error: 'unavailable' | 'unconfigured' }
- *
- * The form treats any 4xx (except duplicate) as inline-validation,
- * 429 as a transient throttle message, 5xx as a try-again-later.
  */
 
-// Force Node runtime — fetch with 'no-store' + reading process.env
-// works under both edge and node, but the in-memory rate limiter
-// only meaningfully works on a stable Node instance.
 export const runtime = 'nodejs';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// E.164 phone — between 8 and 15 digits, optional leading '+'.
-// We don't enforce a leading '+' because the EarlyAccessForm builds
-// the country code separately and could submit either format.
 const PHONE_RE = /^\+?[1-9]\d{7,14}$/;
-
-const LIST_ID = process.env.KLAVIYO_LIST_ID_EARLY_ACCESS;
 
 export async function POST(request: Request) {
   // 1. Rate limit
@@ -76,42 +68,25 @@ export async function POST(request: Request) {
     );
   }
 
-  // 3. Server-side configuration check
-  if (!LIST_ID) {
-    // Misconfigured — log loudly server-side, return generic
-    // unavailable to user (don't reveal infrastructure state).
-    // eslint-disable-next-line no-console
-    console.error(
-      '[/api/klaviyo/subscribe] KLAVIYO_LIST_ID_EARLY_ACCESS is not set'
-    );
-    return NextResponse.json(
-      { ok: false, error: 'unavailable' },
-      { status: 503 }
-    );
-  }
-
-  // 4. Call Klaviyo
-  const result = await subscribeToList({
+  // 3. Call Shopify Admin API
+  const result = await subscribeCustomer({
     email: email.trim(),
-    phone: phone ? phone.replace(/\s/g, '') : undefined,
-    listId: LIST_ID,
+    phone: phone ? normalizePhone(phone) : undefined,
   });
 
   if (result.ok) {
     return NextResponse.json({ ok: true });
   }
 
-  // Map Klaviyo failure reasons → response codes + error names
-  // the client form already understands.
   switch (result.reason) {
     case 'duplicate':
+      // 200 because "already subscribed" is a fine outcome from the
+      // user's perspective (they're on the list either way).
       return NextResponse.json(
         { ok: false, error: 'duplicate' },
-        { status: 200 } // 200 because subscribed-already is "fine" from the user's view
+        { status: 200 }
       );
     case 'validation':
-      // Klaviyo bounced the payload. Could be a malformed phone we
-      // didn't catch or a list-id mismatch. Surface as inline validation.
       // eslint-disable-next-line no-console
       console.error('[/api/klaviyo/subscribe] validation:', result.error);
       return NextResponse.json(
@@ -125,7 +100,9 @@ export async function POST(request: Request) {
       );
     case 'unconfigured':
       // eslint-disable-next-line no-console
-      console.error('[/api/klaviyo/subscribe] Klaviyo not configured');
+      console.error(
+        '[/api/klaviyo/subscribe] Shopify Dev Dashboard OAuth not configured'
+      );
       return NextResponse.json(
         { ok: false, error: 'unconfigured' },
         { status: 503 }
@@ -141,10 +118,6 @@ export async function POST(request: Request) {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────
-// Body parsing
-// ──────────────────────────────────────────────────────────────────────
-
 interface ParsedSubscribeBody {
   email: string;
   phone?: string;
@@ -157,4 +130,13 @@ function parseSubscribeBody(body: unknown): ParsedSubscribeBody {
     email: typeof b.email === 'string' ? b.email : '',
     phone: typeof b.phone === 'string' ? b.phone : undefined,
   };
+}
+
+/**
+ * Normalize a phone number to E.164. The EarlyAccessForm may submit
+ * "+1 202 555 1234" or "12025551234" — Shopify wants strict E.164.
+ */
+function normalizePhone(raw: string): string {
+  const stripped = raw.replace(/\s/g, '');
+  return stripped.startsWith('+') ? stripped : `+${stripped}`;
 }
